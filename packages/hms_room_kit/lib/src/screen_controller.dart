@@ -157,6 +157,23 @@ class _ScreenControllerState extends State<ScreenController> {
     });
   }
 
+  PreviewPage _getPreviewPage() {
+    switch (widget.joinType) {
+      case JoinType.code:
+        return PreviewPage(
+          roomCode: Constant.roomCode,
+          name: widget.options?.userName?.trim() ?? "",
+          options: widget.options,
+        );
+      case JoinType.token:
+        return PreviewPage.token(
+          token: Constant.token,
+          name: widget.options?.userName?.trim() ?? "",
+          options: widget.options,
+        );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -170,11 +187,8 @@ class _ScreenControllerState extends State<ScreenController> {
           : isPermissionGranted
               ? ListenableProvider.value(
                   value: _previewStore,
-                  child: PreviewPage(
-                    roomCode: Constant.roomCode,
-                    name: widget.options?.userName?.trim() ?? "",
-                    options: widget.options,
-                  ))
+                  child: _getPreviewPage(),
+                )
               : PreviewPermissions(
                   roomCode: Constant.roomCode,
                   options: widget.options,
