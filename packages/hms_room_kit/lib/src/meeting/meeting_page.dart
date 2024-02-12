@@ -91,7 +91,7 @@ class _MeetingPageState extends State<MeetingPage> {
               builder: (_, failureErrors, __) {
                 if (failureErrors.item1) {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                    Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => HMSLeftRoomScreen(
                               isEndRoomCalled: failureErrors.item3,
                               doesRoleHasStreamPermission: failureErrors.item4,
