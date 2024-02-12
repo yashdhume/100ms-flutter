@@ -261,9 +261,12 @@ class MeetingStore extends ChangeNotifier
   ///List of bottom sheets currently open
   List<BuildContext> bottomSheets = [];
 
-  Future<HMSException?> join(String userName,
-      {String? roomCode, String? token, HMSConfig? roomConfig}) async {
-    switch (Constant.joinType) {
+  Future<HMSException?> join(JoinType joinType,
+      {required String userName,
+      String? roomCode,
+      String? token,
+      HMSConfig? roomConfig}) async {
+    switch (joinType) {
       case JoinType.token:
         roomConfig ??= HMSConfig(
             authToken: token!,

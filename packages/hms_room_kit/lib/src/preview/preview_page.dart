@@ -94,12 +94,16 @@ class _PreviewPageState extends State<PreviewPage> {
       HMSException? ans;
       switch (widget._joinType) {
         case JoinType.code:
-          ans = await _meetingStore.join(nameController.text.trim(),
-              roomCode: widget.roomCode, token: null);
+          ans = await _meetingStore.join(widget._joinType,
+              userName: nameController.text.trim(),
+              roomCode: widget.roomCode,
+              token: null);
           break;
         case JoinType.token:
-          ans = await _meetingStore.join(nameController.text.trim(),
-              roomCode: null, token: widget.token);
+          ans = await _meetingStore.join(widget._joinType,
+              userName: nameController.text.trim(),
+              roomCode: null,
+              token: widget.token);
           break;
       }
 
