@@ -4,6 +4,7 @@ import 'dart:io';
 ///Package imports
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hms_room_kit/src/enums/join_type.dart';
 import 'package:provider/provider.dart';
 import 'package:hmssdk_flutter/hmssdk_flutter.dart';
 
@@ -27,14 +28,29 @@ import 'package:hms_room_kit/src/meeting/meeting_store.dart';
 ///This renders the Preview Screen
 class PreviewPage extends StatefulWidget {
   final String name;
-  final String roomCode;
+  final String? roomCode;
+  final String? token;
   final HMSPrebuiltOptions? options;
+  final JoinType _joinType;
 
   const PreviewPage(
       {super.key,
       required this.name,
       required this.roomCode,
-      required this.options});
+      required this.options})
+      : token = null,
+        _joinType = JoinType.code,
+        assert(roomCode != null);
+
+  const PreviewPage.token(
+      {super.key,
+      required this.name,
+      required this.token,
+      required this.options})
+      : roomCode = null,
+        _joinType = JoinType.token,
+        assert(token != null);
+
   @override
   State<PreviewPage> createState() => _PreviewPageState();
 }
@@ -75,10 +91,17 @@ class _PreviewPageState extends State<PreviewPage> {
 
       ///Here we set the [MeetingStore] object
       _setMeetingStore(previewStore);
-
-      /// We join the room here
-      HMSException? ans = await _meetingStore.join(
-          nameController.text.trim(), Constant.roomCode);
+      HMSException? ans;
+      switch (widget._joinType) {
+        case JoinType.code:
+          ans = await _meetingStore.join(nameController.text.trim(),
+              roomCode: widget.roomCode, token: null);
+          break;
+        case JoinType.token:
+          ans = await _meetingStore.join(nameController.text.trim(),
+              roomCode: null, token: widget.token);
+          break;
+      }
 
       ///If the room join fails we show the error dialog
       if (ans != null && mounted) {
@@ -86,7 +109,12 @@ class _PreviewPageState extends State<PreviewPage> {
             context: context,
             pageBuilder: (_, data, __) {
               return UtilityComponents.showFailureError(
-                  ans,
+                  ans ??
+                      HMSException(
+                          message: "Unknown",
+                          description: "Unknown",
+                          action: "Unknown",
+                          isTerminal: true),
                   context,
                   () =>
                       Navigator.of(context).popUntil((route) => route.isFirst));
@@ -152,10 +180,15 @@ class _PreviewPageState extends State<PreviewPage> {
               Navigator.pushReplacement(
                   context,
                   CupertinoPageRoute(
-                      builder: (_) => ScreenController(
-                            roomCode: Constant.roomCode,
-                            options: widget.options,
-                          ))),
+                      builder: (_) => widget._joinType == JoinType.token
+                          ? ScreenController.token(
+                              token: Constant.token,
+                              options: widget.options,
+                            )
+                          : ScreenController(
+                              roomCode: Constant.roomCode,
+                              options: widget.options,
+                            ))),
             }
         });
   }

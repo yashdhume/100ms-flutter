@@ -3,6 +3,7 @@ import 'package:flutter/widgets.dart';
 
 ///Project imports
 import 'package:hms_room_kit/hms_room_kit.dart';
+import 'package:hms_room_kit/src/enums/join_type.dart';
 import 'package:hms_room_kit/src/screen_controller.dart';
 
 ///[HMSPrebuilt] is the main widget that is used to render the prebuilt
@@ -15,7 +16,8 @@ class HMSPrebuilt extends StatelessWidget {
   ///
   /// Example: For the public Room: https://public.app.100ms.live/meeting/xvm-wxwo-gbl
   /// The room code is: xvm-wxwo-gbl
-  final String roomCode;
+  final String? roomCode;
+  final String? token;
 
   ///The options for the prebuilt
   ///For more details checkout the [HMSPrebuiltOptions] class
@@ -26,10 +28,20 @@ class HMSPrebuilt extends StatelessWidget {
   ///This function can be passed if you wish to perform some specific actions
   ///in addition to leaving the room when the leave room button is pressed
   final Function? onLeave;
+  final JoinType joinType;
 
   ///The key for the widget
   const HMSPrebuilt(
-      {super.key, required this.roomCode, this.options, this.onLeave});
+      {super.key, required this.roomCode, this.options, this.onLeave})
+      : joinType = JoinType.code,
+        token = null,
+        assert(roomCode != null);
+
+  const HMSPrebuilt.token(
+      {super.key, required this.token, this.options, this.onLeave})
+      : joinType = JoinType.token,
+        roomCode = null,
+        assert(token != null);
 
   ///Builds the widget
   ///Returns a [ScreenController] widget
@@ -43,10 +55,19 @@ class HMSPrebuilt extends StatelessWidget {
   ///The [onLeave] is the callback for the leave room button
   @override
   Widget build(BuildContext context) {
-    return ScreenController(
-      roomCode: roomCode,
-      options: options,
-      onLeave: onLeave,
-    );
+    switch (joinType) {
+      case JoinType.code:
+        return ScreenController(
+          roomCode: roomCode!,
+          options: options,
+          onLeave: onLeave,
+        );
+      case JoinType.token:
+        return ScreenController.token(
+          token: token!,
+          options: options,
+          onLeave: onLeave,
+        );
+    }
   }
 }

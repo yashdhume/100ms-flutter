@@ -28,56 +28,58 @@ class _MoreOptionState extends State<MoreOption> {
         meetingStore.localPeer?.role.permissions.removeOthers ?? false;
 
     return (mutePermission || removeOthers)
-        ? Positioned(
-            bottom: 5,
-            right: 5,
-            child: GestureDetector(
-              onTap: () {
-                ///[peerTrackNode] is the peerTrackNode of the peer whose more option is clicked
-                ///We only show the modal bottom sheet if the peer is not the local peer
-                var peerTrackNode = context.read<PeerTrackNode>();
-                var meetingStore = context.read<MeetingStore>();
-                if (peerTrackNode.peer.peerId !=
-                    meetingStore.localPeer!.peerId) {
-                  showModalBottomSheet(
-                    isScrollControlled: true,
-                    backgroundColor: HMSThemeColors.surfaceDim,
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(16),
-                          topRight: Radius.circular(16)),
-                    ),
-                    context: context,
-                    builder: (ctx) => ChangeNotifierProvider.value(
-                        value: meetingStore,
-                        child: RemotePeerBottomSheet(
-                          meetingStore: meetingStore,
-                          peerTrackNode: peerTrackNode,
-                        )),
-                  );
-                }
-              },
-              child: Semantics(
-                label:
-                    "fl_${context.read<PeerTrackNode>().peer.name}more_option",
-                child: Container(
-                  height: 28,
-                  width: 28,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: HMSThemeColors.backgroundDim.withOpacity(0.64),
-                  ),
-                  child: Center(
-                    child: Icon(
-                      Icons.more_vert,
-                      color: HMSThemeColors.onSurfaceHighEmphasis,
-                      size: 20,
+        ? context.read<PeerTrackNode>().peer.role.name == "host"
+            ? Container()
+            : Positioned(
+                bottom: 5,
+                right: 5,
+                child: GestureDetector(
+                  onTap: () {
+                    ///[peerTrackNode] is the peerTrackNode of the peer whose more option is clicked
+                    ///We only show the modal bottom sheet if the peer is not the local peer
+                    var peerTrackNode = context.read<PeerTrackNode>();
+                    var meetingStore = context.read<MeetingStore>();
+                    if (peerTrackNode.peer.peerId !=
+                        meetingStore.localPeer!.peerId) {
+                      showModalBottomSheet(
+                        isScrollControlled: true,
+                        backgroundColor: HMSThemeColors.surfaceDim,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(16),
+                              topRight: Radius.circular(16)),
+                        ),
+                        context: context,
+                        builder: (ctx) => ChangeNotifierProvider.value(
+                            value: meetingStore,
+                            child: RemotePeerBottomSheet(
+                              meetingStore: meetingStore,
+                              peerTrackNode: peerTrackNode,
+                            )),
+                      );
+                    }
+                  },
+                  child: Semantics(
+                    label:
+                        "fl_${context.read<PeerTrackNode>().peer.name}more_option",
+                    child: Container(
+                      height: 28,
+                      width: 28,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        color: HMSThemeColors.backgroundDim.withOpacity(0.64),
+                      ),
+                      child: Center(
+                        child: Icon(
+                          Icons.more_vert,
+                          color: HMSThemeColors.onSurfaceHighEmphasis,
+                          size: 20,
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
-          )
+              )
         : Container();
   }
 }
