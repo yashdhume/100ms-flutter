@@ -210,8 +210,7 @@ class _ParticipantsBottomSheetState extends State<ParticipantsBottomSheet> {
                     PopupMenuItem(
                       value: 12,
                       child: Row(children: [
-                        SvgPicture.asset(
-                            "packages/hms_room_kit/lib/src/assets/icons/change_role_video.svg",
+                        SvgPicture.asset(peer.role.iconPath,
                             width: 20,
                             height: 20,
                             colorFilter: ColorFilter.mode(
@@ -287,7 +286,7 @@ class _ParticipantsBottomSheetState extends State<ParticipantsBottomSheet> {
                           width: 8,
                         ),
                         HMSTitleText(
-                          text: peer.role.iconPath,
+                          text: 'Change to chat',
                           textColor: HMSThemeColors.onSurfaceHighEmphasis,
                           fontSize: 14,
                           lineHeight: 20,
@@ -309,7 +308,7 @@ class _ParticipantsBottomSheetState extends State<ParticipantsBottomSheet> {
                           width: 8,
                         ),
                         HMSTitleText(
-                          text: peer.role.iconPath,
+                          text: 'Change to spectator',
                           textColor: HMSThemeColors.onSurfaceHighEmphasis,
                           fontSize: 14,
                           lineHeight: 20,
