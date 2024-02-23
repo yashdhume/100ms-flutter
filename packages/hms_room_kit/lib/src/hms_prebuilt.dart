@@ -28,17 +28,26 @@ class HMSPrebuilt extends StatelessWidget {
   ///This function can be passed if you wish to perform some specific actions
   ///in addition to leaving the room when the leave room button is pressed
   final Function? onLeave;
+  final Function? onRoomEnd;
   final JoinType joinType;
 
   ///The key for the widget
   const HMSPrebuilt(
-      {super.key, required this.roomCode, this.options, this.onLeave})
+      {super.key,
+      required this.roomCode,
+      this.options,
+      this.onLeave,
+      this.onRoomEnd})
       : joinType = JoinType.code,
         token = null,
         assert(roomCode != null);
 
   const HMSPrebuilt.token(
-      {super.key, required this.token, this.options, this.onLeave})
+      {super.key,
+      required this.token,
+      this.options,
+      this.onLeave,
+      this.onRoomEnd})
       : joinType = JoinType.token,
         roomCode = null,
         assert(token != null);
@@ -61,12 +70,14 @@ class HMSPrebuilt extends StatelessWidget {
           roomCode: roomCode!,
           options: options,
           onLeave: onLeave,
+          onRoomEnd: onRoomEnd,
         );
       case JoinType.token:
         return ScreenController.token(
           token: token!,
           options: options,
           onLeave: onLeave,
+          onRoomEnd: onRoomEnd,
         );
     }
   }

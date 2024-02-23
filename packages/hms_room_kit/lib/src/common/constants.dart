@@ -51,4 +51,5 @@ class Constant {
 
   ///[Constant.onLeave] is the function that you wish to execute while leaving the room
   static Function? onLeave;
+  static Function? onRoomEnd;
 }

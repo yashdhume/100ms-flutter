@@ -380,6 +380,9 @@ class MeetingStore extends ChangeNotifier
 
   void endRoom(bool lock, String? reason) {
     isEndRoomCalled = true;
+    if (Constant.onRoomEnd != null) {
+      Constant.onRoomEnd!();
+    }
     _hmsSDKInteractor.endRoom(lock, reason ?? "", this);
     _hmsSDKInteractor.destroy();
   }
