@@ -171,7 +171,11 @@ class _ChatUtilitiesBottomSheetState extends State<ChatUtilitiesBottomSheet> {
                       fontWeight: FontWeight.w600,
                       textColor: HMSThemeColors.onSurfaceHighEmphasis)),
 
-            if (changeRolePermission && widget.message.sender != null)
+            if (changeRolePermission &&
+                widget.message.sender != null &&
+                widget.message.sender?.role.name != "host" &&
+                context.read<MeetingStore>().localPeer?.peerId !=
+                    widget.message.sender?.peerId)
               ExpansionPanelList(
                 elevation: 0,
                 materialGapSize: 0,
