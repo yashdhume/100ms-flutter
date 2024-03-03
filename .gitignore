@@ -55,3 +55,5 @@ sample apps/hms-callkit-app/.dart_tool/flutter_build/
 packages/.DS_Store
 Runner.ipa
 sample apps/flutterflow-prebuilt-quickstart/.dart_tool/
+
+.idea/
