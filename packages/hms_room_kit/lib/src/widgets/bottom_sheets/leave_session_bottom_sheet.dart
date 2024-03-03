@@ -138,6 +138,10 @@ class _LeaveSessionBottomSheetState extends State<LeaveSessionBottomSheet> {
                           value: widget.meetingStore,
                           child: EndServiceBottomSheet(
                             onButtonPressed: () => {
+                              if (Constant.onRoomEnd != null)
+                                {
+                                  Constant.onRoomEnd!(),
+                                },
                               if ((widget.meetingStore.localPeer?.role
                                           .permissions.hlsStreaming ??
                                       false) &&
