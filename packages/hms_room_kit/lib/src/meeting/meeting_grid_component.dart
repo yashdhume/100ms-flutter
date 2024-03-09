@@ -39,23 +39,37 @@ class MeetingGridComponent extends StatelessWidget {
                 : null),
         builder: (_, data, __) {
           if (data.item3 == 0) {
-            return Center(
-                child: Column(
-              mainAxisSize: MainAxisSize.min,
+            return Column(
               children: [
-                CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: HMSThemeColors.primaryDefault,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    IconButton(
+                        onPressed: Navigator.of(context).pop,
+                        icon: const Icon(Icons.arrow_back)),
+                  ],
                 ),
-                const SizedBox(
-                  height: 10,
+                const Spacer(),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: HMSThemeColors.primaryDefault,
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    if (context.read<MeetingStore>().peers.isNotEmpty)
+                      HMSTitleText(
+                          text: "Please wait for broadcaster to join",
+                          textColor: HMSThemeColors.onSurfaceHighEmphasis),
+                    const Spacer(),
+                  ],
                 ),
-                if (context.read<MeetingStore>().peers.isNotEmpty)
-                  HMSTitleText(
-                      text: "Please wait for broadcaster to join",
-                      textColor: HMSThemeColors.onSurfaceHighEmphasis)
               ],
-            ));
+            );
           }
           return Selector<MeetingStore, Tuple2<MeetingMode, HMSPeer?>>(
               selector: (_, meetingStore) =>
