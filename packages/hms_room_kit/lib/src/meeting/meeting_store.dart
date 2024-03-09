@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'dart:io';
 
 //Package imports
+import 'package:hms_room_kit/src/enums/join_type.dart';
 import 'package:hmssdk_flutter/hmssdk_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -262,38 +263,47 @@ class MeetingStore extends ChangeNotifier
   ///List of bottom sheets currently open
   List<BuildContext> bottomSheets = [];
 
-  Future<HMSException?> join(String userName, {HMSConfig? roomConfig}) async {
-    //If roomConfig is null then only we call the methods to get the authToken
-    //If we are joining the room from preview we already have authToken so we don't
-    //need to call the getAuthTokenByRoomCode method
-    if (roomConfig == null) {
-      //We use this to get the auth token from room code
-      dynamic tokenData;
-
-      if (Constant.roomCode != null) {
-        tokenData = await _hmsSDKInteractor.getAuthTokenByRoomCode(
-            userId: Constant.prebuiltOptions?.userId,
-            roomCode: Constant.roomCode!,
-            endPoint: Constant.tokenEndPoint);
-      } else {
-        tokenData = Constant.authToken;
-      }
-
-      ///If the tokenData is String then we set the authToken in the roomConfig
-      ///and then we join the room
-      ///
-      ///If the tokenData is HMSException then we return the HMSException i.e. tokenData
-      if ((tokenData is String?) && tokenData != null) {
-        ///Success Scenario
-        roomConfig = HMSConfig(
-            authToken: tokenData,
+  Future<HMSException?> join(JoinType joinType,
+      {required String userName,
+      String? roomCode,
+      String? token,
+      HMSConfig? roomConfig}) async {
+    switch (joinType) {
+      case JoinType.token:
+        roomConfig ??= HMSConfig(
+            authToken: token!,
             userName: userName,
             captureNetworkQualityInPreview: true,
             endPoint: Constant.initEndPoint);
-      } else {
-        ///Error Scenario
-        return tokenData;
-      }
+        break;
+      case JoinType.code:
+        //If roomConfig is null then only we call the methods to get the authToken
+        //If we are joining the room from preview we already have authToken so we don't
+        //need to call the getAuthTokenByRoomCode method
+        if (roomConfig == null) {
+          //We use this to get the auth token from room code
+          dynamic tokenData = await _hmsSDKInteractor.getAuthTokenByRoomCode(
+              userId: Constant.prebuiltOptions?.userId,
+              roomCode: Constant.roomCode,
+              endPoint: Constant.tokenEndPoint);
+
+          ///If the tokenData is String then we set the authToken in the roomConfig
+          ///and then we join the room
+          ///
+          ///If the tokenData is HMSException then we return the HMSException i.e. tokenData
+          if ((tokenData is String?) && tokenData != null) {
+            ///Success Scenario
+            roomConfig = HMSConfig(
+                authToken: tokenData,
+                userName: userName,
+                captureNetworkQualityInPreview: true,
+                endPoint: Constant.initEndPoint);
+          } else {
+            ///Error Scenario
+            return tokenData;
+          }
+        }
+        meetingUrl = roomCode!;
     }
 
     _hmsSDKInteractor.addUpdateListener(this);
@@ -302,7 +312,7 @@ class MeetingStore extends ChangeNotifier
     HMSHLSPlayerController.addHMSHLSPlaybackEventsListener(this);
     WidgetsBinding.instance.addObserver(this);
     setMeetingModeUsingLayoutApi();
-    _hmsSDKInteractor.join(config: roomConfig);
+    _hmsSDKInteractor.join(config: roomConfig!);
     setRecipientSelectorValue();
     return null;
   }
@@ -509,6 +519,19 @@ class MeetingStore extends ChangeNotifier
         forPeer: peer,
         force: forceChange,
         hmsActionResultListener: this);
+  }
+
+  void changeRole(HMSPeer peer, String roleName) {
+    try {
+      changeRoleOfPeer(
+          peer: peer,
+          roleName: roles.firstWhere((element) => element.name == roleName),
+          forceChange: roleName != 'co-host');
+      return;
+    } catch (e) {
+      log(e.toString());
+      return;
+    }
   }
 
   void setPreviousRole(String oldRole) {

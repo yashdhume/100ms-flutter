@@ -1,5 +1,6 @@
 //Class contains the constants used throughout the application
 import 'package:hms_room_kit/hms_room_kit.dart';
+import 'package:hms_room_kit/src/enums/join_type.dart';
 import 'package:hmssdk_flutter/hmssdk_flutter.dart';
 
 /// This class contains the constants used throughout the application
@@ -9,10 +10,10 @@ class Constant {
       "https://public.app.100ms.live/meeting/xvm-wxwo-gbl";
 
   /// [Constant.roomCode] is the meeting code that will be used
-  static String? roomCode = "";
+  static String roomCode = "";
+  static JoinType joinType = JoinType.token;
 
-  ///[Constant.authToken] is auth token to join the room
-  static String? authToken = "";
+  static String token = "";
 
   /// [Constant.streamingUrl] is the streaming url that will be used
   static String streamingUrl = "";
@@ -50,4 +51,5 @@ class Constant {
 
   ///[Constant.onLeave] is the function that you wish to execute while leaving the room
   static Function? onLeave;
+  static Function? onRoomEnd;
 }

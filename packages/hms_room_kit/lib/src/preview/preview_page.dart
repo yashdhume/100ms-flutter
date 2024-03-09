@@ -4,6 +4,7 @@ import 'dart:io';
 ///Package imports
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hms_room_kit/src/enums/join_type.dart';
 import 'package:provider/provider.dart';
 import 'package:hmssdk_flutter/hmssdk_flutter.dart';
 
@@ -27,9 +28,29 @@ import 'package:hms_room_kit/src/meeting/meeting_store.dart';
 ///This renders the Preview Screen
 class PreviewPage extends StatefulWidget {
   final String name;
+  final String? roomCode;
+  final String? token;
   final HMSPrebuiltOptions? options;
+  final JoinType _joinType;
 
-  const PreviewPage({super.key, required this.name, required this.options});
+  const PreviewPage(
+      {super.key,
+      required this.name,
+      required this.roomCode,
+      required this.options})
+      : token = null,
+        _joinType = JoinType.code,
+        assert(roomCode != null);
+
+  const PreviewPage.token(
+      {super.key,
+      required this.name,
+      required this.token,
+      required this.options})
+      : roomCode = null,
+        _joinType = JoinType.token,
+        assert(token != null);
+
   @override
   State<PreviewPage> createState() => _PreviewPageState();
 }
@@ -70,10 +91,21 @@ class _PreviewPageState extends State<PreviewPage> {
 
       ///Here we set the [MeetingStore] object
       _setMeetingStore(previewStore);
-
-      /// We join the room here
-      HMSException? ans = await _meetingStore.join(nameController.text.trim(),
-          roomConfig: previewStore.roomConfig);
+      HMSException? ans;
+      switch (widget._joinType) {
+        case JoinType.code:
+          ans = await _meetingStore.join(widget._joinType,
+              userName: nameController.text.trim(),
+              roomCode: widget.roomCode,
+              token: null);
+          break;
+        case JoinType.token:
+          ans = await _meetingStore.join(widget._joinType,
+              userName: nameController.text.trim(),
+              roomCode: null,
+              token: widget.token);
+          break;
+      }
 
       ///If the room join fails we show the error dialog
       if (ans != null && mounted) {
@@ -81,7 +113,12 @@ class _PreviewPageState extends State<PreviewPage> {
             context: context,
             pageBuilder: (_, data, __) {
               return UtilityComponents.showFailureError(
-                  ans,
+                  ans ??
+                      HMSException(
+                          message: "Unknown",
+                          description: "Unknown",
+                          action: "Unknown",
+                          isTerminal: true),
                   context,
                   () =>
                       Navigator.of(context).popUntil((route) => route.isFirst));
@@ -144,20 +181,20 @@ class _PreviewPageState extends State<PreviewPage> {
               previewStore.isMeetingJoined = false,
               previewStore.hmsSDKInteractor.leave(),
               HMSThemeColors.resetLayoutColors(),
-              navigateBack()
+              Navigator.pushReplacement(
+                  context,
+                  CupertinoPageRoute(
+                      builder: (_) => widget._joinType == JoinType.token
+                          ? ScreenController.token(
+                              token: Constant.token,
+                              options: widget.options,
+                            )
+                          : ScreenController(
+                              roomCode: Constant.roomCode,
+                              options: widget.options,
+                            ))),
             }
         });
-  }
-
-  void navigateBack() {
-    Navigator.pushReplacement(
-        context,
-        CupertinoPageRoute(
-            builder: (_) => ScreenController(
-                  roomCode: Constant.roomCode,
-                  authToken: Constant.authToken,
-                  options: widget.options,
-                )));
   }
 
   @override
@@ -194,283 +231,260 @@ class _PreviewPageState extends State<PreviewPage> {
                           currentAudioDeviceMode:
                               previewStore.currentAudioDeviceMode),
                     )
-                  : SingleChildScrollView(
-                      ///We show circular progress indicator until the local peer is null
-                      ///otherwise we render the preview
-                      child: (previewStore.peer == null)
-                          ? const HMSLoader()
-                          /**
+                  : (previewStore.peer == null)
+                      ? const HMSLoader()
+                      /**
                        * This component is used to render the video if the role has permission to publish video.
                        * For hls-viewer role or role without video publishing permission we just render an empty container with screen height and width
                        * The video is only rendered is camera is turned ON
                        * Otherwise it will render the circular avatar
                       */
-                          : Stack(
-                              children: [
-                                ((!previewStore
-                                        .peer!.role.publishSettings!.allowed
-                                        .contains("video")))
-                                    ? SizedBox(
-                                        height: height,
-                                        width: width,
-                                      )
-                                    : Stack(
-                                        children: [
-                                          Container(
-                                            height: height,
-                                            width: width,
-                                            color: HMSThemeColors.backgroundDim,
-
-                                            ///This renders the video view
-                                            ///It will be shown only if the video is ON
-                                            ///and the role has permission to publish video
-                                            ///Otherwise it will render the circular avatar
-                                            child: (previewStore.isVideoOn)
-                                                ? Center(
-                                                    child: HMSTextureView(
-                                                      scaleType: ScaleType
-                                                          .SCALE_ASPECT_FILL,
-                                                      track: previewStore
-                                                          .localTracks[0],
-                                                      setMirror: true,
-                                                    ),
-                                                  )
-                                                : isHLSStarting
-                                                    ? Container()
-                                                    : Center(
-                                                        child: HMSCircularAvatar(
-                                                            avatarTitleTextColor:
-                                                                Colors.white,
-                                                            name: nameController
-                                                                .text),
-                                                      ),
-                                          ),
-
-                                          ///This shows the network quality strength of the peer
-                                          ///It will be shown only if the network quality is not null
-                                          ///and not -1 and HLS is not starting
-                                          PreviewNetworkIndicator(
-                                              previewStore: previewStore,
-                                              isHidden: isHLSStarting)
-                                        ],
-                                      ),
-
-                                ///This renders the gradient background for the preview screen
-                                ///It will be shown only if the peer role is not hls
-                                ///and the video is ON
-                                PreviewHeader(
-                                    previewStore: previewStore,
-                                    isHidden: isHLSStarting,
-                                    width: width),
-
-                                ///This renders the back button at top left
-                                if (!isHLSStarting)
-                                  Positioned(
-                                      top: Platform.isIOS ? 50 : 35,
-                                      left: 10,
-                                      child: HMSBackButton(
-                                          onPressed: () => {
-                                                previewStore.leave(),
-                                                Navigator.pop(context)
-                                              })),
-
-                                ///This renders the bottom sheet with microphone, camera and audio device settings
-                                ///This also contains text field for entering the name
-                                ///
-                                ///This is only rendered when the peer is not null
-                                ///and the HLS is not starting
-                                Positioned(
-                                  bottom: 0,
-                                  child: (previewStore.peer != null &&
-                                          !isHLSStarting)
-                                      ? Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                const BorderRadius.only(
-                                                    topLeft:
-                                                        Radius.circular(16),
-                                                    topRight:
-                                                        Radius.circular(16)),
-                                            color: HMSThemeColors
-                                                .backgroundDefault,
-                                          ),
-                                          width: width,
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 16.0, vertical: 16),
-                                            child: Column(
-                                              children: [
-                                                ///This renders the preview page bottom buttons
-                                                PreviewBottomButtonSection(
-                                                    previewStore: previewStore),
-                                                const SizedBox(
-                                                  height: 16,
-                                                ),
-
-                                                ///This renders the name text field and join button
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          bottom: 24.0),
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      SizedBox(
-                                                        height: 48,
-                                                        width: width * 0.50,
-                                                        child: TextField(
-                                                          enabled: widget.name
-                                                              .trim()
-                                                              .isEmpty,
-                                                          cursorColor:
-                                                              HMSThemeColors
-                                                                  .onSurfaceHighEmphasis,
-                                                          onTapOutside: (event) =>
-                                                              FocusManager
-                                                                  .instance
-                                                                  .primaryFocus
-                                                                  ?.unfocus(),
-                                                          textInputAction:
-                                                              TextInputAction
-                                                                  .done,
-                                                          textCapitalization:
-                                                              TextCapitalization
-                                                                  .words,
-                                                          style: HMSTextStyle
-                                                              .setTextStyle(
-                                                                  color: HMSThemeColors
-                                                                      .onSurfaceHighEmphasis),
-                                                          controller:
-                                                              nameController,
-                                                          keyboardType:
-                                                              TextInputType
-                                                                  .text,
-                                                          onChanged: (value) {
-                                                            setState(() {});
-                                                          },
-                                                          decoration:
-                                                              InputDecoration(
-                                                                  contentPadding:
-                                                                      const EdgeInsets.symmetric(
-                                                                          vertical:
-                                                                              12,
-                                                                          horizontal:
-                                                                              16),
-                                                                  fillColor: HMSThemeColors
-                                                                      .surfaceDefault,
-                                                                  filled: true,
-
-                                                                  ///This renders the hint text
-                                                                  hintText:
-                                                                      'Enter Name...',
-                                                                  hintStyle: HMSTextStyle.setTextStyle(
-                                                                      color: HMSThemeColors
-                                                                          .onSurfaceLowEmphasis,
-                                                                      height:
-                                                                          1.5,
-                                                                      fontSize:
-                                                                          16,
-                                                                      letterSpacing:
-                                                                          0.5,
-                                                                      fontWeight: FontWeight
-                                                                          .w400),
-                                                                  focusedBorder: OutlineInputBorder(
-                                                                      borderSide: BorderSide(
-                                                                          width:
-                                                                              2,
-                                                                          color: HMSThemeColors
-                                                                              .primaryDefault),
-                                                                      borderRadius:
-                                                                          const BorderRadius.all(Radius.circular(
-                                                                              8))),
-                                                                  enabledBorder: const OutlineInputBorder(
-                                                                      borderSide:
-                                                                          BorderSide
-                                                                              .none,
-                                                                      borderRadius:
-                                                                          BorderRadius.all(Radius.circular(8))),
-                                                                  border: const OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(8)))),
-                                                        ),
-                                                      ),
-                                                      HMSListenableButton(
-                                                        isDisabled:
-                                                            isHLSStarting,
-                                                        textController:
-                                                            nameController,
-                                                        width: width * 0.38,
-                                                        onPressed: () =>
-                                                            _joinMeeting(
-                                                                previewStore),
-                                                        childWidget:
-                                                            PreviewJoinButton(
-                                                          isEmpty:
-                                                              nameController
-                                                                  .text
-                                                                  .trim()
-                                                                  .isEmpty,
-                                                          previewStore:
-                                                              previewStore,
-                                                          isJoining:
-                                                              isJoiningRoom,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        )
-                                      : const SizedBox(),
-                                ),
-                                if (isHLSStarting)
-                                  Container(
+                      : Stack(
+                          children: [
+                            ((!previewStore.peer!.role.publishSettings!.allowed
+                                    .contains("video")))
+                                ? SizedBox(
                                     height: height,
                                     width: width,
-                                    decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
-                                      colors: [
-                                        HMSThemeColors.backgroundDim
-                                            .withOpacity(1),
-                                        HMSThemeColors.backgroundDim
-                                            .withOpacity(0)
-                                      ],
-                                    )),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          color: HMSThemeColors.primaryDefault,
-                                        ),
-                                        const SizedBox(
-                                          height: 29,
-                                        ),
-                                        HMSSubtitleText(
-                                          text: "Starting live stream...",
-                                          textColor: HMSThemeColors
-                                              .onSurfaceHighEmphasis,
-                                          fontSize: 16,
-                                          lineHeight: 24,
-                                          letterSpacing: 0.50,
-                                        )
-                                      ],
-                                    ),
+                                  )
+                                : Stack(
+                                    children: [
+                                      Container(
+                                        height: height,
+                                        width: width,
+                                        color: HMSThemeColors.backgroundDim,
+
+                                        ///This renders the video view
+                                        ///It will be shown only if the video is ON
+                                        ///and the role has permission to publish video
+                                        ///Otherwise it will render the circular avatar
+                                        child: (previewStore.isVideoOn)
+                                            ? Center(
+                                                child: HMSTextureView(
+                                                  scaleType: ScaleType
+                                                      .SCALE_ASPECT_FILL,
+                                                  track: previewStore
+                                                      .localTracks[0],
+                                                  setMirror: true,
+                                                ),
+                                              )
+                                            : isHLSStarting
+                                                ? Container()
+                                                : Center(
+                                                    child: HMSCircularAvatar(
+                                                        avatarTitleTextColor:
+                                                            Colors.white,
+                                                        name: nameController
+                                                            .text),
+                                                  ),
+                                      ),
+
+                                      ///This shows the network quality strength of the peer
+                                      ///It will be shown only if the network quality is not null
+                                      ///and not -1 and HLS is not starting
+                                      PreviewNetworkIndicator(
+                                          previewStore: previewStore,
+                                          isHidden: isHLSStarting)
+                                    ],
                                   ),
-                                if (error != null)
-                                  UtilityComponents.showFailureError(
-                                      error,
-                                      context,
-                                      () => Navigator.of(context)
-                                          .popUntil((route) => route.isFirst)),
-                              ],
+
+                            ///This renders the gradient background for the preview screen
+                            ///It will be shown only if the peer role is not hls
+                            ///and the video is ON
+                            PreviewHeader(
+                                previewStore: previewStore,
+                                isHidden: isHLSStarting,
+                                width: width),
+
+                            ///This renders the back button at top left
+                            if (!isHLSStarting)
+                              Positioned(
+                                  top: Platform.isIOS ? 50 : 35,
+                                  left: 10,
+                                  child: HMSBackButton(
+                                      onPressed: () => {
+                                            previewStore.leave(),
+                                            Navigator.pop(context)
+                                          })),
+
+                            ///This renders the bottom sheet with microphone, camera and audio device settings
+                            ///This also contains text field for entering the name
+                            ///
+                            ///This is only rendered when the peer is not null
+                            ///and the HLS is not starting
+                            Positioned(
+                              bottom: 0,
+                              child: (previewStore.peer != null &&
+                                      !isHLSStarting)
+                                  ? Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: const BorderRadius.only(
+                                            topLeft: Radius.circular(16),
+                                            topRight: Radius.circular(16)),
+                                        color: HMSThemeColors.backgroundDefault,
+                                      ),
+                                      width: width,
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16.0, vertical: 16),
+                                        child: Column(
+                                          children: [
+                                            ///This renders the preview page bottom buttons
+                                            PreviewBottomButtonSection(
+                                                previewStore: previewStore),
+                                            const SizedBox(
+                                              height: 16,
+                                            ),
+
+                                            ///This renders the name text field and join button
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  bottom: 24.0),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  SizedBox(
+                                                    height: 48,
+                                                    width: width * 0.50,
+                                                    child: TextField(
+                                                      enabled: widget.name
+                                                          .trim()
+                                                          .isEmpty,
+                                                      cursorColor: HMSThemeColors
+                                                          .onSurfaceHighEmphasis,
+                                                      onTapOutside: (event) =>
+                                                          FocusManager.instance
+                                                              .primaryFocus
+                                                              ?.unfocus(),
+                                                      textInputAction:
+                                                          TextInputAction.done,
+                                                      textCapitalization:
+                                                          TextCapitalization
+                                                              .words,
+                                                      style: HMSTextStyle.setTextStyle(
+                                                          color: HMSThemeColors
+                                                              .onSurfaceHighEmphasis),
+                                                      controller:
+                                                          nameController,
+                                                      keyboardType:
+                                                          TextInputType.text,
+                                                      onChanged: (value) {
+                                                        setState(() {});
+                                                      },
+                                                      decoration:
+                                                          InputDecoration(
+                                                              contentPadding:
+                                                                  const EdgeInsets.symmetric(
+                                                                      vertical:
+                                                                          12,
+                                                                      horizontal:
+                                                                          16),
+                                                              fillColor: HMSThemeColors
+                                                                  .surfaceDefault,
+                                                              filled: true,
+
+                                                              ///This renders the hint text
+                                                              hintText:
+                                                                  'Enter Name...',
+                                                              hintStyle: HMSTextStyle.setTextStyle(
+                                                                  color: HMSThemeColors
+                                                                      .onSurfaceLowEmphasis,
+                                                                  height: 1.5,
+                                                                  fontSize: 16,
+                                                                  letterSpacing:
+                                                                      0.5,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400),
+                                                              focusedBorder: OutlineInputBorder(
+                                                                  borderSide: BorderSide(
+                                                                      width: 2,
+                                                                      color: HMSThemeColors
+                                                                          .primaryDefault),
+                                                                  borderRadius: const BorderRadius.all(
+                                                                      Radius.circular(
+                                                                          8))),
+                                                              enabledBorder: const OutlineInputBorder(
+                                                                  borderSide:
+                                                                      BorderSide
+                                                                          .none,
+                                                                  borderRadius:
+                                                                      BorderRadius.all(Radius.circular(8))),
+                                                              border: const OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(8)))),
+                                                    ),
+                                                  ),
+                                                  HMSListenableButton(
+                                                    isDisabled: isHLSStarting,
+                                                    textController:
+                                                        nameController,
+                                                    width: width * 0.38,
+                                                    onPressed: () =>
+                                                        _joinMeeting(
+                                                            previewStore),
+                                                    childWidget:
+                                                        PreviewJoinButton(
+                                                      isEmpty: nameController
+                                                          .text
+                                                          .trim()
+                                                          .isEmpty,
+                                                      previewStore:
+                                                          previewStore,
+                                                      isJoining: isJoiningRoom,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                  : const SizedBox(),
                             ),
-                    ),
+                            if (isHLSStarting)
+                              Container(
+                                height: height,
+                                width: width,
+                                decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    HMSThemeColors.backgroundDim.withOpacity(1),
+                                    HMSThemeColors.backgroundDim.withOpacity(0)
+                                  ],
+                                )),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: HMSThemeColors.primaryDefault,
+                                    ),
+                                    const SizedBox(
+                                      height: 29,
+                                    ),
+                                    HMSSubtitleText(
+                                      text: "Starting live stream...",
+                                      textColor:
+                                          HMSThemeColors.onSurfaceHighEmphasis,
+                                      fontSize: 16,
+                                      lineHeight: 24,
+                                      letterSpacing: 0.50,
+                                    )
+                                  ],
+                                ),
+                              ),
+                            if (error != null)
+                              UtilityComponents.showFailureError(
+                                  error,
+                                  context,
+                                  () => Navigator.of(context)
+                                      .popUntil((route) => route.isFirst)),
+                          ],
+                        ),
             );
           }),
     );

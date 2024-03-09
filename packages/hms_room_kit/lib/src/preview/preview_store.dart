@@ -3,6 +3,7 @@ import 'dart:developer';
 
 ///Package imports
 import 'package:flutter/cupertino.dart';
+import 'package:hms_room_kit/src/enums/join_type.dart';
 import 'package:hmssdk_flutter/hmssdk_flutter.dart';
 
 ///Project imports
@@ -106,39 +107,48 @@ class PreviewStore extends ChangeNotifier
     notifyListeners();
   }
 
-  Future<HMSException?> startPreview({required String userName}) async {
+  Future<HMSException?> startPreview(JoinType joinType,
+      {required String userName,
+      required String roomCode,
+      required String token}) async {
+    switch (joinType) {
+      case JoinType.code:
+        dynamic tokenData = await hmsSDKInteractor.getAuthTokenByRoomCode(
+            userId: Constant.prebuiltOptions?.userId,
+            roomCode: roomCode,
+            endPoint: Constant.tokenEndPoint);
+        if ((tokenData! is String?) && tokenData == null) return tokenData;
+        Constant.token = tokenData;
+        token = tokenData;
+        roomConfig = HMSConfig(
+            authToken: tokenData,
+            userName: userName,
+            captureNetworkQualityInPreview: true,
+            // endPoint is only required by 100ms Team. Client developers should not use `endPoint`
+            //This is only for 100ms internal testing, endPoint can be safely removed from
+            //the HMSConfig for external usage
+            endPoint: Constant.initEndPoint);
+      case JoinType.token:
+        roomConfig = HMSConfig(
+            authToken: token,
+            userName: userName,
+            captureNetworkQualityInPreview: true,
+            endPoint: Constant.initEndPoint);
+    }
     //We use this to get the auth token from room code
 
-    dynamic tokenData;
-    if (Constant.roomCode != null) {
-      tokenData = await hmsSDKInteractor.getAuthTokenByRoomCode(
-          userId: Constant.prebuiltOptions?.userId,
-          roomCode: Constant.roomCode!,
-          endPoint: Constant.tokenEndPoint);
-    } else {
-      tokenData = Constant.authToken;
-    }
-
-    if ((tokenData is String?) && tokenData != null) {
-      roomConfig = HMSConfig(
-          authToken: tokenData,
-          userName: userName,
-          captureNetworkQualityInPreview: true,
-          // endPoint is only required by 100ms Team. Client developers should not use `endPoint`
-          //This is only for 100ms internal testing, endPoint can be safely removed from
-          //the HMSConfig for external usage
-          endPoint: Constant.initEndPoint);
-      await HMSRoomLayout.getRoomLayout(
-          hmsSDKInteractor: hmsSDKInteractor,
-          authToken: tokenData,
-          endPoint: Constant.layoutAPIEndPoint);
+    await HMSRoomLayout.getRoomLayout(
+        hmsSDKInteractor: hmsSDKInteractor,
+        authToken: token,
+        endPoint: Constant.layoutAPIEndPoint);
+    if (Constant.debugMode) {
       hmsSDKInteractor.startHMSLogger(
           Constant.webRTCLogLevel, Constant.sdkLogLevel);
-      hmsSDKInteractor.addPreviewListener(this);
-      hmsSDKInteractor.preview(config: roomConfig!);
-      return null;
     }
-    return tokenData;
+    hmsSDKInteractor.addPreviewListener(this);
+    hmsSDKInteractor.preview(config: roomConfig!);
+    meetingUrl = roomCode;
+    return null;
   }
 
   @override
