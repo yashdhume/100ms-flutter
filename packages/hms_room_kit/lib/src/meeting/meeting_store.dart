@@ -311,7 +311,7 @@ class MeetingStore extends ChangeNotifier
     HMSHLSPlayerController.addHMSHLSPlaybackEventsListener(this);
     WidgetsBinding.instance.addObserver(this);
     setMeetingModeUsingLayoutApi();
-    _hmsSDKInteractor.join(config: roomConfig!);
+    _hmsSDKInteractor.join(config: roomConfig);
     setRecipientSelectorValue();
     return null;
   }
@@ -2397,6 +2397,7 @@ class MeetingStore extends ChangeNotifier
         notifyListeners();
         break;
       case HMSActionResultListenerMethod.endRoom:
+        leave();
         clearRoomState();
         break;
       case HMSActionResultListenerMethod.removePeer:
