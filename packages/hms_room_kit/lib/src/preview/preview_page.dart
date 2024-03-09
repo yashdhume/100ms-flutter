@@ -181,7 +181,7 @@ class _PreviewPageState extends State<PreviewPage> {
               previewStore.isMeetingJoined = false,
               previewStore.hmsSDKInteractor.leave(),
               HMSThemeColors.resetLayoutColors(),
-              Navigator.pushReplacement(
+              Navigator.push(
                   context,
                   CupertinoPageRoute(
                       builder: (_) => widget._joinType == JoinType.token

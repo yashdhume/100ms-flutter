@@ -69,7 +69,7 @@ class _HLSViewerPageState extends State<HLSViewerPage> {
           builder: (_, failureData, __) {
             if (failureData.item1) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => HMSLeftRoomScreen(
                           isEndRoomCalled: failureData.item3,
                           doesRoleHasStreamPermission: failureData.item4,
