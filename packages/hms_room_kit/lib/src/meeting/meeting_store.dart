@@ -303,7 +303,6 @@ class MeetingStore extends ChangeNotifier
             return tokenData;
           }
         }
-        meetingUrl = roomCode!;
     }
 
     _hmsSDKInteractor.addUpdateListener(this);

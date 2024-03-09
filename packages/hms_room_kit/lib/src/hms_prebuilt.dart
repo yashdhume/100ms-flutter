@@ -34,20 +34,20 @@ class HMSPrebuilt extends StatelessWidget {
   ///The key for the widget
   const HMSPrebuilt(
       {super.key,
-        required this.roomCode,
-        this.options,
-        this.onLeave,
-        this.onRoomEnd})
+      required this.roomCode,
+      this.options,
+      this.onLeave,
+      this.onRoomEnd})
       : joinType = JoinType.code,
         token = null,
         assert(roomCode != null);
 
   const HMSPrebuilt.token(
       {super.key,
-        required this.token,
-        this.options,
-        this.onLeave,
-        this.onRoomEnd})
+      required this.token,
+      this.options,
+      this.onLeave,
+      this.onRoomEnd})
       : joinType = JoinType.token,
         roomCode = null,
         assert(token != null);

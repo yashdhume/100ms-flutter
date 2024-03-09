@@ -147,7 +147,6 @@ class PreviewStore extends ChangeNotifier
     }
     hmsSDKInteractor.addPreviewListener(this);
     hmsSDKInteractor.preview(config: roomConfig!);
-    meetingUrl = roomCode;
     return null;
   }
 

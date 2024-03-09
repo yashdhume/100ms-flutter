@@ -141,6 +141,10 @@ class _LeaveSessionBottomSheetState extends State<LeaveSessionBottomSheet> {
                               if (Constant.onRoomEnd != null)
                                 {
                                   Constant.onRoomEnd!(),
+                                  widget.meetingStore.endRoom(
+                                    false,
+                                    "Room Ended From Flutter",
+                                  ),
                                 },
                               if ((widget.meetingStore.localPeer?.role
                                           .permissions.hlsStreaming ??
