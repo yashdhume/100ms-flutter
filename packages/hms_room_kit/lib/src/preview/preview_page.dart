@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hms_room_kit/src/enums/join_type.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:hmssdk_flutter/hmssdk_flutter.dart';
 
@@ -459,9 +460,8 @@ class _PreviewPageState extends State<PreviewPage> {
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: HMSThemeColors.primaryDefault,
+                                    Lottie.asset(
+                                      'packages/hms_room_kit/lib/src/assets/icons/textLoader.json',
                                     ),
                                     const SizedBox(
                                       height: 29,

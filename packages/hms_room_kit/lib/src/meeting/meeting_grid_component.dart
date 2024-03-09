@@ -4,6 +4,7 @@ import 'dart:io';
 ///Package imports
 import 'package:flutter/material.dart';
 import 'package:hmssdk_flutter/hmssdk_flutter.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
 
@@ -46,17 +47,21 @@ class MeetingGridComponent extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     IconButton(
-                        onPressed: Navigator.of(context).pop,
+                        onPressed: () {
+                          context.read<MeetingStore>().leave();
+                          Navigator.of(context).pop();
+                        },
                         icon: const Icon(Icons.arrow_back)),
                   ],
                 ),
-                const Spacer(),
+                Spacer(),
                 Column(
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: HMSThemeColors.primaryDefault,
+                    Lottie.asset(
+                      'packages/hms_room_kit/lib/src/assets/icons/waiting.json',
+                      height: 250,
                     ),
                     const SizedBox(
                       height: 10,
@@ -65,9 +70,9 @@ class MeetingGridComponent extends StatelessWidget {
                       HMSTitleText(
                           text: "Please wait for broadcaster to join",
                           textColor: HMSThemeColors.onSurfaceHighEmphasis),
-                    const Spacer(),
                   ],
                 ),
+                const Spacer()
               ],
             );
           }

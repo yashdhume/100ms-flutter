@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:hms_room_kit/src/enums/join_type.dart';
 import 'package:hmssdk_flutter/hmssdk_flutter.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 ///Project imports
@@ -189,10 +190,8 @@ class _ScreenControllerState extends State<ScreenController> {
     return Scaffold(
       body: isLoading
           ? Center(
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                color: HMSThemeColors.primaryDefault,
-              ),
+              child: Lottie.asset(
+                  'packages/hms_room_kit/lib/src/assets/icons/textLoader.json'),
             )
           : isPermissionGranted
               ? ListenableProvider.value(

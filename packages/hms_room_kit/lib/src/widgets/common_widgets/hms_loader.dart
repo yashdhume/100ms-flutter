@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 ///Project imports
 import 'package:hms_room_kit/src/layout_api/hms_theme_colors.dart';
+import 'package:lottie/lottie.dart';
 
 ///[HMSLoader] returns a loader with the default theme
 ///The height of the loader is the height of the screen
@@ -20,11 +21,8 @@ class HMSLoader extends StatelessWidget {
       color: HMSThemeColors.backgroundDefault,
       height: height ?? (MediaQuery.of(context).size.height),
       child: Center(
-        child: CircularProgressIndicator(
-          strokeWidth: strokeWidth ?? 2,
-          color: loaderColor ?? HMSThemeColors.primaryDefault,
-        ),
-      ),
+          child: Lottie.asset(
+              'packages/hms_room_kit/lib/src/assets/icons/textLoader.json')),
     );
   }
 }
