@@ -288,7 +288,6 @@ class MeetingStore extends ChangeNotifier
     WidgetsBinding.instance.addObserver(this);
     setMeetingModeUsingLayoutApi();
     setRecipientSelectorValue();
-    _hmsSDKInteractor.join(config: joinConfig);
     return null;
   }
 
@@ -497,6 +496,19 @@ class MeetingStore extends ChangeNotifier
         forPeer: peer,
         force: forceChange,
         hmsActionResultListener: this);
+  }
+
+  void changeRole(HMSPeer peer, String roleName) {
+    try {
+      changeRoleOfPeer(
+          peer: peer,
+          roleName: roles.firstWhere((element) => element.name == roleName),
+          forceChange: roleName != 'co-host');
+      return;
+    } catch (e) {
+      log(e.toString());
+      return;
+    }
   }
 
   void setPreviousRole(String oldRole) {

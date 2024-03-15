@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 ///Project imports
 import 'package:hms_room_kit/hms_room_kit.dart';
+import 'package:hms_room_kit/src/enums/join_type.dart';
 import 'package:hms_room_kit/src/layout_api/hms_room_layout.dart' as roomlayout;
 import 'package:hms_room_kit/src/widgets/common_widgets/hms_subheading_text.dart';
 
@@ -122,15 +123,21 @@ class HMSLeftRoomScreen extends StatelessWidget {
                           ))),
                       onPressed: () => {
                             HMSThemeColors.resetLayoutColors(),
-                            Navigator.pushReplacement(
+                            Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (_) => HMSPrebuilt(
-                                          roomCode: Constant.roomCode,
-                                          authToken: Constant.authToken,
-                                          options: Constant.prebuiltOptions,
-                                          onLeave: Constant.onLeave,
-                                        ))),
+                                    builder: (_) => Constant.joinType ==
+                                            JoinType.code
+                                        ? HMSPrebuilt(
+                                            roomCode: Constant.roomCode,
+                                            options: Constant.prebuiltOptions,
+                                            onLeave: Constant.onLeave,
+                                          )
+                                        : HMSPrebuilt.token(
+                                            token: Constant.token,
+                                            options: Constant.prebuiltOptions,
+                                            onLeave: Constant.onLeave,
+                                          ))),
                           },
                       child: SizedBox(
                         height: 48,

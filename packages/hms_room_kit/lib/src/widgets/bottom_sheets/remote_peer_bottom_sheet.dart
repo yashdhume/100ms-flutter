@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 ///Project imports
 import 'package:hms_room_kit/hms_room_kit.dart';
+import 'package:hms_room_kit/src/common/extentsions.dart';
 import 'package:hms_room_kit/src/meeting/meeting_store.dart';
 import 'package:hms_room_kit/src/model/peer_track_node.dart';
 import 'package:hms_room_kit/src/widgets/common_widgets/hms_cross_button.dart';
@@ -26,10 +27,19 @@ class RemotePeerBottomSheet extends StatefulWidget {
 }
 
 class _RemotePeerBottomSheetState extends State<RemotePeerBottomSheet> {
+  bool changeRolePermission = false;
+  List<String> roles = [];
+  bool isChangeHostExpanded = false;
+
   @override
   void initState() {
     super.initState();
     context.read<MeetingStore>().addBottomSheet(context);
+    changeRolePermission =
+        context.read<MeetingStore>().localPeer?.role.permissions.changeRole ??
+            false;
+    roles = ['co-host', 'video', 'voice', 'chat', 'spectator'];
+    roles.removeWhere((e) => e == widget.peerTrackNode.peer.role.name);
   }
 
   @override
@@ -236,6 +246,74 @@ class _RemotePeerBottomSheetState extends State<RemotePeerBottomSheet> {
                   //     title: HMSSubheadingText(
                   //         text: "Volume",
                   //         textColor: HMSThemeColors.onSurfaceHighEmphasis)),
+
+                  if (changeRolePermission)
+                    ExpansionPanelList(
+                      elevation: 0,
+                      materialGapSize: 0,
+                      expansionCallback: (int index, bool isExpanded) =>
+                          setState(
+                        () => isChangeHostExpanded = !isChangeHostExpanded,
+                      ),
+                      children: [
+                        ExpansionPanel(
+                          isExpanded: isChangeHostExpanded,
+                          backgroundColor: const Color(0xFF1A1B26),
+                          headerBuilder: (_, __) => ListTile(
+                              horizontalTitleGap: 2,
+                              contentPadding: EdgeInsets.zero,
+                              onTap: () => setState(
+                                    () => isChangeHostExpanded =
+                                        !isChangeHostExpanded,
+                                  ),
+                              leading: SvgPicture.asset(
+                                widget.peerTrackNode.peer.role.iconPath,
+                                semanticsLabel: "fl_change_role",
+                                height: 20,
+                                width: 20,
+                                colorFilter: ColorFilter.mode(
+                                    HMSThemeColors.onSurfaceHighEmphasis,
+                                    BlendMode.srcIn),
+                              ),
+                              title: HMSSubheadingText(
+                                  text:
+                                      "Change Role: ${widget.peerTrackNode.peer.role.name.capitalize.removeDash}",
+                                  letterSpacing: 0.1,
+                                  textColor:
+                                      HMSThemeColors.onSurfaceHighEmphasis)),
+                          body: Column(
+                            children: roles
+                                .map(
+                                  (role) => ListTile(
+                                      horizontalTitleGap: 2,
+                                      leading: SvgPicture.asset(
+                                        role.changeRoleIconPath,
+                                        semanticsLabel: "fl_change_role_$role",
+                                        height: 20,
+                                        width: 20,
+                                        colorFilter: ColorFilter.mode(
+                                            HMSThemeColors
+                                                .onSurfaceHighEmphasis,
+                                            BlendMode.srcIn),
+                                      ),
+                                      onTap: () async {
+                                        Navigator.pop(context);
+                                        context.read<MeetingStore>().changeRole(
+                                            widget.peerTrackNode.peer, role);
+                                      },
+                                      contentPadding: EdgeInsets.zero,
+                                      title: HMSSubheadingText(
+                                          text: role.capitalize.removeDash,
+                                          letterSpacing: 0.1,
+                                          textColor: HMSThemeColors
+                                              .onSurfaceHighEmphasis)),
+                                )
+                                .toList(),
+                          ),
+                        ),
+                      ],
+                    ),
+
                   if (widget.meetingStore.localPeer?.role.permissions
                           .removeOthers ??
                       false)
