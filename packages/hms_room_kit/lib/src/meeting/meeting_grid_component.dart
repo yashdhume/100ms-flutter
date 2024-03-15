@@ -62,9 +62,9 @@ class MeetingGridComponent extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Lottie.asset(
-                      'packages/hms_room_kit/lib/src/assets/icons/waiting.json',
-                      height: 250,
+                    CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: HMSThemeColors.primaryDefault,
                     ),
                     const SizedBox(
                       height: 10,

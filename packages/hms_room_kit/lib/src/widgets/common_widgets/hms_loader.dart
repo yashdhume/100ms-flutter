@@ -23,8 +23,11 @@ class HMSLoader extends StatelessWidget {
       color: HMSThemeColors.backgroundDefault,
       height: height ?? (MediaQuery.of(context).size.height),
       child: Center(
-          child: Lottie.asset(
-              'packages/hms_room_kit/lib/src/assets/icons/textLoader.json')),
+        child: CircularProgressIndicator(
+          strokeWidth: strokeWidth ?? 2,
+          color: loaderColor ?? HMSThemeColors.primaryDefault,
+        ),
+      ),
     );
   }
 }

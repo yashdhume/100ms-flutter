@@ -190,8 +190,10 @@ class _ScreenControllerState extends State<ScreenController> {
     return Scaffold(
       body: (isLoading)
           ? Center(
-              child: Lottie.asset(
-                  'packages/hms_room_kit/lib/src/assets/icons/textLoader.json'),
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: HMSThemeColors.primaryDefault,
+              ),
             )
           : isPermissionGranted
               ? PreviewMeetingFlow(

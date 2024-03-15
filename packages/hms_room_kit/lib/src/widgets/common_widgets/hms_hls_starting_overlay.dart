@@ -25,10 +25,9 @@ class HMSHLSStartingOverlay extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Lottie.asset(
-            "packages/hms_room_kit/lib/src/assets/icons/textLoader.json",
-            height: 100,
-            width: 100,
+          CircularProgressIndicator(
+            strokeWidth: 2,
+            color: HMSThemeColors.primaryDefault,
           ),
           const SizedBox(
             height: 29,
