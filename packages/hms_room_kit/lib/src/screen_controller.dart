@@ -6,7 +6,6 @@ import 'package:hms_room_kit/src/layout_api/hms_room_layout.dart';
 import 'package:hms_room_kit/src/preview_meeting_flow.dart';
 import 'package:hmssdk_flutter/hmssdk_flutter.dart';
 import 'package:lottie/lottie.dart';
-import 'package:provider/provider.dart';
 
 ///Project imports
 import 'package:hms_room_kit/hms_room_kit.dart';
@@ -41,7 +40,8 @@ class ScreenController extends StatefulWidget {
       required this.roomCode,
       this.options,
       this.onLeave,
-      this.authToken, this.onRoomEnd});
+      this.authToken,
+      this.onRoomEnd});
   @override
   State<ScreenController> createState() => _ScreenControllerState();
 }
@@ -145,8 +145,8 @@ class _ScreenControllerState extends State<ScreenController> {
 
     _hmsSDKInteractor = HMSSDKInteractor(
         iOSScreenshareConfig: widget.options?.iOSScreenshareConfig,
-        joinWithMutedAudio: true,
-        joinWithMutedVideo: true,
+        joinWithMutedAudio: false,
+        joinWithMutedVideo: false,
         isSoftwareDecoderDisabled: AppDebugConfig.isSoftwareDecoderDisabled,
         isAudioMixerDisabled: AppDebugConfig.isAudioMixerDisabled,
         isPrebuilt: true);

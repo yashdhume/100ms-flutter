@@ -71,7 +71,7 @@ class MeetingGridComponent extends StatelessWidget {
                     ),
                     if (context.read<MeetingStore>().peers.isNotEmpty)
                       HMSTitleText(
-                          text: "Please wait for broadcaster to join",
+                          text: "Please wait for host to join",
                           textColor: HMSThemeColors.onSurfaceHighEmphasis),
                   ],
                 ),

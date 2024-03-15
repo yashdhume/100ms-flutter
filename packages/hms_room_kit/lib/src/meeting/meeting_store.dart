@@ -288,6 +288,7 @@ class MeetingStore extends ChangeNotifier
     WidgetsBinding.instance.addObserver(this);
     setMeetingModeUsingLayoutApi();
     setRecipientSelectorValue();
+    _hmsSDKInteractor.join(config: joinConfig);
     return null;
   }
 
@@ -356,6 +357,12 @@ class MeetingStore extends ChangeNotifier
 
   void endRoom(bool lock, String? reason) {
     isEndRoomCalled = true;
+    for (var peer in peers) {
+      if (peer.isLocal) {
+        continue;
+      }
+      removePeerFromRoom(peer);
+    }
     _hmsSDKInteractor.endRoom(lock, reason ?? "", this);
     _hmsSDKInteractor.destroy();
   }
@@ -501,9 +508,9 @@ class MeetingStore extends ChangeNotifier
   void changeRole(HMSPeer peer, String roleName) {
     try {
       changeRoleOfPeer(
-          peer: peer,
-          roleName: roles.firstWhere((element) => element.name == roleName),
-          forceChange: roleName != 'co-host');
+        peer: peer,
+        roleName: roles.firstWhere((element) => element.name == roleName),
+      );
       return;
     } catch (e) {
       log(e.toString());
@@ -1234,7 +1241,7 @@ class MeetingStore extends ChangeNotifier
   @override
   void onRemovedFromRoom(
       {required HMSPeerRemovedFromPeer hmsPeerRemovedFromPeer}) {
-    isEndRoomCalled = hmsPeerRemovedFromPeer.roomWasEnded;
+    isEndRoomCalled = true;
     log("onRemovedFromRoom-> sender: ${hmsPeerRemovedFromPeer.peerWhoRemoved}, reason: ${hmsPeerRemovedFromPeer.reason}, roomEnded: ${hmsPeerRemovedFromPeer.roomWasEnded}");
     description = "Removed by ${hmsPeerRemovedFromPeer.peerWhoRemoved?.name}";
     clearRoomState();
@@ -2720,7 +2727,7 @@ class MeetingStore extends ChangeNotifier
       /*******************************This is the implementation for showing emoji's in HLS *******************/
       /**
        * Generally we are assuming that the timed metadata payload will be a JSON String
-       * but if it's a normal string then this throws the format exception 
+       * but if it's a normal string then this throws the format exception
        * Hence we catch it and display the payload as string on toast.
        * The toast is displayed for the time duration hlsCue.endDate - hlsCue.startDate
        * If endDate is null then toast is displayed for 2 seconds by default
