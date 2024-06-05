@@ -1,22 +1,22 @@
 ///Dart imports
 library;
 
-import 'dart:io';
-
 ///Package imports
 import 'package:flutter/material.dart';
+
+///Project imports
+import 'package:hms_room_kit/src/enums/meeting_mode.dart';
+import 'package:hms_room_kit/src/layout_api/hms_theme_colors.dart';
+import 'package:hms_room_kit/src/meeting/meeting_navigation_visibility_controller.dart';
+import 'package:hms_room_kit/src/meeting/meeting_store.dart';
+import 'package:hms_room_kit/src/model/peer_track_node.dart';
+import 'package:hms_room_kit/src/widgets/common_widgets/hms_title_text.dart';
+import 'package:hms_room_kit/src/widgets/meeting_modes/custom_one_to_one_grid.dart';
+import 'package:hms_room_kit/src/widgets/meeting_modes/one_to_one_mode.dart';
 import 'package:hmssdk_flutter/hmssdk_flutter.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
-
-///Project imports
-import 'package:hms_room_kit/src/enums/meeting_mode.dart';
-import 'package:hms_room_kit/src/meeting/meeting_navigation_visibility_controller.dart';
-import 'package:hms_room_kit/src/meeting/meeting_store.dart';
-import 'package:hms_room_kit/src/model/peer_track_node.dart';
-import 'package:hms_room_kit/src/widgets/meeting_modes/custom_one_to_one_grid.dart';
-import 'package:hms_room_kit/src/widgets/meeting_modes/one_to_one_mode.dart';
 
 ///[MeetingGridComponent] is a component that is used to show the video grid
 class MeetingGridComponent extends StatelessWidget {
