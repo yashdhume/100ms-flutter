@@ -6,6 +6,7 @@ import 'dart:io';
 ///Package imports
 import 'package:flutter/material.dart';
 import 'package:hmssdk_flutter/hmssdk_flutter.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
 
@@ -44,6 +45,42 @@ class MeetingGridComponent extends StatelessWidget {
                   height: double.infinity,
                   width: double.infinity,
                 ));
+          if (data.item3 == 0 || data.item7 == 0) {
+            return Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    IconButton(
+                        onPressed: () {
+                          context.read<MeetingStore>().leave();
+                          Navigator.of(context).pop();
+                        },
+                        icon: const Icon(Icons.arrow_back)),
+                  ],
+                ),
+                Spacer(),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: HMSThemeColors.primaryDefault,
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    if (context.read<MeetingStore>().peers.isNotEmpty)
+                      HMSTitleText(
+                          text: "Please wait for host to join",
+                          textColor: HMSThemeColors.onSurfaceHighEmphasis),
+                  ],
+                ),
+                const Spacer()
+              ],
+            );
           }
           return Selector<MeetingStore, Tuple2<MeetingMode, HMSPeer?>>(
               selector: (_, meetingStore) =>
@@ -62,19 +99,8 @@ class MeetingGridComponent extends StatelessWidget {
                           ///height of video grid by 140 else it covers the whole screen
                           ///
                           ///Here we also check for the platform and reduce the height accordingly
-                          height: showControls
-                              ? MediaQuery.of(context).size.height -
-                                  MediaQuery.of(context).padding.top -
-                                  MediaQuery.of(context).padding.bottom -
-                                  (Platform.isAndroid
-                                      ? 160
-                                      : Platform.isIOS
-                                          ? 230
-                                          : 160)
-                              : MediaQuery.of(context).size.height -
-                                  MediaQuery.of(context).padding.top -
-                                  MediaQuery.of(context).padding.bottom -
-                                  20,
+                          padding: EdgeInsets.symmetric(
+                              vertical: showControls ? 70 : 0),
                           child: GestureDetector(
                             onTap: () => visibilityController
                                 ?.toggleControlsVisibility(),

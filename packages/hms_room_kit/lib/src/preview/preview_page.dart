@@ -5,6 +5,7 @@ import 'dart:io';
 
 ///Package imports
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 import 'package:hmssdk_flutter/hmssdk_flutter.dart';
 
@@ -67,7 +68,7 @@ class _PreviewPageState extends State<PreviewPage> {
     }
     previewStore.removePreviewListener();
 
-    Navigator.of(context).pushReplacement(MaterialPageRoute(
+    Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => MeetingScreenController(
               role: role,
               localPeerNetworkQuality: localPeerNetworkQuality,
@@ -99,9 +100,7 @@ class _PreviewPageState extends State<PreviewPage> {
             return Scaffold(
               resizeToAvoidBottomInset: false,
               backgroundColor: HMSThemeColors.backgroundDim,
-              body: SingleChildScrollView(
-                ///We show circular progress indicator until the local peer is null
-                ///otherwise we render the preview
+              body: SafeArea(
                 child: (previewStore.peer == null)
                     ? const HMSLoader()
                     /**
@@ -210,6 +209,9 @@ class _PreviewPageState extends State<PreviewPage> {
                                                   height: 48,
                                                   width: width * 0.50,
                                                   child: TextField(
+                                                    readOnly: widget.name
+                                                        .trim()
+                                                        .isNotEmpty,
                                                     enabled: widget.name
                                                         .trim()
                                                         .isEmpty,

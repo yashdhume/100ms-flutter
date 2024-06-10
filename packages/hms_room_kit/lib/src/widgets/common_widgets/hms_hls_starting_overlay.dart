@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 ///Project imports
 import 'package:hms_room_kit/src/layout_api/hms_theme_colors.dart';
 import 'package:hms_room_kit/src/widgets/common_widgets/hms_subtitle_text.dart';
+import 'package:lottie/lottie.dart';
 
 ///[HMSHLSStartingOverlay] renders the overlay UI while HLS is starting
 class HMSHLSStartingOverlay extends StatelessWidget {
