@@ -518,6 +518,7 @@ class MeetingStore extends ChangeNotifier
       changeRoleOfPeer(
         peer: peer,
         roleName: roles.firstWhere((element) => element.name == roleName),
+        forceChange: true,
       );
       return;
     } catch (e) {
@@ -723,6 +724,7 @@ class MeetingStore extends ChangeNotifier
   }
 
   HMSHLSRecordingConfig? hmshlsRecordingConfig;
+
   Future<HMSException?> startHLSStreaming(
       bool singleFile, bool videoOnDemand) async {
     hmshlsRecordingConfig = HMSHLSRecordingConfig(
@@ -2487,7 +2489,7 @@ class MeetingStore extends ChangeNotifier
       /*******************************This is the implementation for showing emoji's in HLS *******************/
       /**
        * Generally we are assuming that the timed metadata payload will be a JSON String
-       * but if it's a normal string then this throws the format exception 
+       * but if it's a normal string then this throws the format exception
        * Hence we catch it and display the payload as string on toast.
        * The toast is displayed for the time duration hlsCue.endDate - hlsCue.startDate
        * If endDate is null then toast is displayed for 2 seconds by default
