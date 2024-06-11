@@ -5,24 +5,23 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
-//Package imports
-import 'package:hmssdk_flutter/hmssdk_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
-
-//Project imports
-import 'package:hms_room_kit/src/model/poll_store.dart';
-import 'package:hms_room_kit/src/model/participant_store.dart';
 import 'package:hms_room_kit/hms_room_kit.dart';
 import 'package:hms_room_kit/src/enums/meeting_mode.dart';
 import 'package:hms_room_kit/src/enums/session_store_keys.dart';
 import 'package:hms_room_kit/src/hmssdk_interactor.dart';
 import 'package:hms_room_kit/src/layout_api/hms_room_layout.dart';
+import 'package:hms_room_kit/src/model/participant_store.dart';
 import 'package:hms_room_kit/src/model/peer_track_node.dart';
+//Project imports
+import 'package:hms_room_kit/src/model/poll_store.dart';
 import 'package:hms_room_kit/src/model/rtc_stats.dart';
 import 'package:hms_room_kit/src/widgets/toasts/hms_toast_model.dart';
 import 'package:hms_room_kit/src/widgets/toasts/hms_toasts_type.dart';
+//Package imports
+import 'package:hmssdk_flutter/hmssdk_flutter.dart';
+import 'package:intl/intl.dart';
 
 ///[MeetingStore] is the store that is used to store the data of the meeting
 ///It takes the following parameters:
@@ -518,6 +517,7 @@ class MeetingStore extends ChangeNotifier
       changeRoleOfPeer(
         peer: peer,
         roleName: roles.firstWhere((element) => element.name == roleName),
+        forceChange: true,
       );
       return;
     } catch (e) {
@@ -723,6 +723,7 @@ class MeetingStore extends ChangeNotifier
   }
 
   HMSHLSRecordingConfig? hmshlsRecordingConfig;
+
   Future<HMSException?> startHLSStreaming(
       bool singleFile, bool videoOnDemand) async {
     hmshlsRecordingConfig = HMSHLSRecordingConfig(
@@ -2487,7 +2488,7 @@ class MeetingStore extends ChangeNotifier
       /*******************************This is the implementation for showing emoji's in HLS *******************/
       /**
        * Generally we are assuming that the timed metadata payload will be a JSON String
-       * but if it's a normal string then this throws the format exception 
+       * but if it's a normal string then this throws the format exception
        * Hence we catch it and display the payload as string on toast.
        * The toast is displayed for the time duration hlsCue.endDate - hlsCue.startDate
        * If endDate is null then toast is displayed for 2 seconds by default
