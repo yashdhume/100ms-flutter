@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 ///Project imports
 import 'package:hms_room_kit/src/layout_api/hms_theme_colors.dart';
 import 'package:hms_room_kit/src/widgets/common_widgets/hms_subtitle_text.dart';
+import 'package:lottie/lottie.dart';
 
 ///[HMSHLSStartingOverlay] renders the overlay UI while HLS is starting
 class HMSHLSStartingOverlay extends StatelessWidget {
@@ -24,9 +25,10 @@ class HMSHLSStartingOverlay extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularProgressIndicator(
-            strokeWidth: 2,
-            color: HMSThemeColors.primaryDefault,
+          Lottie.asset(
+            "packages/hms_room_kit/lib/src/assets/icons/textLoader.json",
+            height: 100,
+            width: 100,
           ),
           const SizedBox(
             height: 29,

@@ -369,6 +369,12 @@ class MeetingStore extends ChangeNotifier
 
   void endRoom(bool lock, String? reason) {
     isEndRoomCalled = true;
+    for (var peer in peers) {
+      if (peer.isLocal) {
+        continue;
+      }
+      removePeerFromRoom(peer);
+    }
     _hmsSDKInteractor.endRoom(lock, reason ?? "", this);
     _hmsSDKInteractor.destroy();
   }
@@ -509,6 +515,19 @@ class MeetingStore extends ChangeNotifier
         forPeer: peer,
         force: forceChange,
         hmsActionResultListener: this);
+  }
+
+  void changeRole(HMSPeer peer, String roleName) {
+    try {
+      changeRoleOfPeer(
+        peer: peer,
+        roleName: roles.firstWhere((element) => element.name == roleName),
+      );
+      return;
+    } catch (e) {
+      log(e.toString());
+      return;
+    }
   }
 
   void setPreviousRole(String oldRole) {
@@ -1234,7 +1253,7 @@ class MeetingStore extends ChangeNotifier
   @override
   void onRemovedFromRoom(
       {required HMSPeerRemovedFromPeer hmsPeerRemovedFromPeer}) {
-    isEndRoomCalled = hmsPeerRemovedFromPeer.roomWasEnded;
+    isEndRoomCalled = true;
     log("onRemovedFromRoom-> sender: ${hmsPeerRemovedFromPeer.peerWhoRemoved}, reason: ${hmsPeerRemovedFromPeer.reason}, roomEnded: ${hmsPeerRemovedFromPeer.roomWasEnded}");
     description = "Removed by ${hmsPeerRemovedFromPeer.peerWhoRemoved?.name}";
     clearRoomState();
