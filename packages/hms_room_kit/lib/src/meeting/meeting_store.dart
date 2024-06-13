@@ -517,11 +517,23 @@ class MeetingStore extends ChangeNotifier
         hmsActionResultListener: this);
   }
 
+  bool shouldForceChange(String currentRole, String newRole) {
+    if (currentRole == 'video' &&
+        (newRole == 'voice' || newRole == 'chat' || newRole == 'spectator')) {
+      return true;
+    } else if (currentRole == 'voice' &&
+        (newRole == 'chat' || newRole == 'spectator')) {
+      return true;
+    }
+    return false;
+  }
+
   void changeRole(HMSPeer peer, String roleName) {
     try {
       changeRoleOfPeer(
         peer: peer,
         roleName: roles.firstWhere((element) => element.name == roleName),
+        forceChange: shouldForceChange(peer.role.name, roleName),
       );
       return;
     } catch (e) {
