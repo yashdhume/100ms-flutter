@@ -115,7 +115,7 @@ class _MeetingPageState extends State<MeetingPage> {
                                   primaryColor: HMSThemeColors.primaryDefault,
                                   scaffoldBackgroundColor:
                                       HMSThemeColors.backgroundDim),
-                              child: SingleChildScrollView(
+                              child: SafeArea(
                                 child: SizedBox(
                                   width: MediaQuery.of(context).size.width,
                                   height: MediaQuery.of(context).size.height -

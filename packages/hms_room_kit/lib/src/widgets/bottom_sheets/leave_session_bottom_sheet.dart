@@ -232,6 +232,6 @@ class _LeaveSessionBottomSheetState extends State<LeaveSessionBottomSheet> {
               buttonText:
                   "Leave ${HMSRoomLayout.peerType == PeerRoleType.conferencing ? "Session" : "Stream"}",
             ),
-          );
+    );
   }
 }

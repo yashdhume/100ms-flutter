@@ -110,7 +110,7 @@ class _MeetingScreenControllerState extends State<MeetingScreenController> {
     }
 
     ///We join the room here
-    await _meetingStore.join(widget.user, widget.tokenData);
+    await _meetingStore.join(widget.options?.userName ?? '', widget.tokenData);
     setState(() {
       showLoader = false;
     });

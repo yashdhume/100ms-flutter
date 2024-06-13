@@ -94,77 +94,97 @@ class HMSLeftRoomScreen extends StatelessWidget {
                   const SizedBox(
                     height: 48,
                   ),
+                  ElevatedButton(
+                    onPressed: Navigator.of(context).pop,
+                    child: HMSTitleText(
+                      ///The text is different if the room is ended or not
+                      ///If the room end is called, the text is "Restart"
+                      ///If you leave the room, the text is "Rejoin"
+                      text: 'Leave',
+                      textColor: HMSThemeColors.onPrimaryHighEmphasis,
+                    ),
+                    style: ButtonStyle(
+                        shadowColor: MaterialStateProperty.all(
+                            HMSThemeColors.surfaceDim),
+                        backgroundColor: MaterialStateProperty.all(
+                            HMSThemeColors.primaryDefault),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ))),
+                  )
 
                   ///If the room is ended and peer role type is hlsViewer, we don't show the text
-                  HMSSubheadingText(
-
-                      ///The text is different if the room is ended by you or by someone else
-                      ///If the room end is called, and peer role type is conferencing the text is "Ended by mistake?"
-                      ///If you leave the room, the text is "Left by mistake?"
-                      text: (doesRoleHasStreamPermission || !(isEndRoomCalled))
-                          ? "Left by mistake?"
-                          : "Ended by mistake?",
-                      textColor: HMSThemeColors.onSurfaceMediumEmphasis),
-                  const SizedBox(
-                    height: 16,
-                  ),
-
-                  ElevatedButton(
-                      style: ButtonStyle(
-                          shadowColor: MaterialStateProperty.all(
-                              HMSThemeColors.surfaceDim),
-                          backgroundColor: MaterialStateProperty.all(
-                              HMSThemeColors.primaryDefault),
-                          shape:
-                              MaterialStateProperty.all<RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0),
-                          ))),
-                      onPressed: () => {
-                            HMSThemeColors.resetLayoutColors(),
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (_) => HMSPrebuilt(
-                                          roomCode: Constant.roomCode,
-                                          authToken: Constant.authToken,
-                                          options: Constant.prebuiltOptions,
-                                          onLeave: Constant.onLeave,
-                                        ))),
-                          },
-                      child: SizedBox(
-                        height: 48,
-                        width:
-                            (doesRoleHasStreamPermission || !(isEndRoomCalled))
-                                ? 91
-                                : 100,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SvgPicture.asset(
-                              "packages/hms_room_kit/lib/src/assets/icons/login.svg",
-                              height: 24,
-                              width: 24,
-                              colorFilter: ColorFilter.mode(
-                                  HMSThemeColors.onPrimaryHighEmphasis,
-                                  BlendMode.srcIn),
-                            ),
-                            const SizedBox(
-                              width: 8,
-                            ),
-                            HMSTitleText(
-                              ///The text is different if the room is ended or not
-                              ///If the room end is called, the text is "Restart"
-                              ///If you leave the room, the text is "Rejoin"
-                              text: (doesRoleHasStreamPermission ||
-                                      !(isEndRoomCalled))
-                                  ? "Rejoin"
-                                  : "Restart",
-                              textColor: HMSThemeColors.onPrimaryHighEmphasis,
-                            )
-                          ],
-                        ),
-                      ))
+                  // HMSSubheadingText(
+                  //
+                  //     ///The text is different if the room is ended by you or by someone else
+                  //     ///If the room end is called, and peer role type is conferencing the text is "Ended by mistake?"
+                  //     ///If you leave the room, the text is "Left by mistake?"
+                  //     text: (doesRoleHasStreamPermission || !(isEndRoomCalled))
+                  //         ? "Left by mistake?"
+                  //         : "Ended by mistake?",
+                  //     textColor: HMSThemeColors.onSurfaceMediumEmphasis),
+                  // const SizedBox(
+                  //   height: 16,
+                  // ),
+                  //
+                  // ElevatedButton(
+                  //     style: ButtonStyle(
+                  //         shadowColor: MaterialStateProperty.all(
+                  //             HMSThemeColors.surfaceDim),
+                  //         backgroundColor: MaterialStateProperty.all(
+                  //             HMSThemeColors.primaryDefault),
+                  //         shape:
+                  //             MaterialStateProperty.all<RoundedRectangleBorder>(
+                  //                 RoundedRectangleBorder(
+                  //           borderRadius: BorderRadius.circular(8.0),
+                  //         ))),
+                  //     onPressed: () => {
+                  //           HMSThemeColors.resetLayoutColors(),
+                  //           Navigator.push(
+                  //               context,
+                  //               MaterialPageRoute(
+                  //                   builder: (_) => HMSPrebuilt(
+                  //                         roomCode: Constant.roomCode,
+                  //                         authToken: Constant.authToken,
+                  //                         options: Constant.prebuiltOptions,
+                  //                         onLeave: Constant.onLeave,
+                  //                       ))),
+                  //         },
+                  //     child: SizedBox(
+                  //       height: 48,
+                  //       width:
+                  //           (doesRoleHasStreamPermission || !(isEndRoomCalled))
+                  //               ? 91
+                  //               : 100,
+                  //       child: Row(
+                  //         mainAxisAlignment: MainAxisAlignment.center,
+                  //         children: [
+                  //           SvgPicture.asset(
+                  //             "packages/hms_room_kit/lib/src/assets/icons/login.svg",
+                  //             height: 24,
+                  //             width: 24,
+                  //             colorFilter: ColorFilter.mode(
+                  //                 HMSThemeColors.onPrimaryHighEmphasis,
+                  //                 BlendMode.srcIn),
+                  //           ),
+                  //           const SizedBox(
+                  //             width: 8,
+                  //           ),
+                  //           HMSTitleText(
+                  //             ///The text is different if the room is ended or not
+                  //             ///If the room end is called, the text is "Restart"
+                  //             ///If you leave the room, the text is "Rejoin"
+                  //             text: (doesRoleHasStreamPermission ||
+                  //                     !(isEndRoomCalled))
+                  //                 ? "Rejoin"
+                  //                 : "Restart",
+                  //             textColor: HMSThemeColors.onPrimaryHighEmphasis,
+                  //           )
+                  //         ],
+                  //       ),
+                  //     ))
                 ],
               )),
             ],
