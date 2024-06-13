@@ -518,8 +518,10 @@ class MeetingStore extends ChangeNotifier
 
   bool shouldForceChange(String currentRole, String newRole) {
     Map<String, List<String>> validRoles = {
+      'co-host': ['video', 'voice', 'chat', 'spectator'],
       'video': ['voice', 'chat', 'spectator'],
-      'voice': ['chat', 'spectator']
+      'voice': ['chat', 'spectator'],
+      'chat': ['spectator']
     };
 
     return validRoles[currentRole]?.contains(newRole) ?? false;
