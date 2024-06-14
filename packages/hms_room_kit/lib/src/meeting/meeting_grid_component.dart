@@ -3,12 +3,12 @@ library;
 
 ///Package imports
 import 'package:flutter/material.dart';
-import 'package:hms_room_kit/hms_room_kit.dart';
 
 ///Project imports
 import 'package:hms_room_kit/src/enums/meeting_mode.dart';
 import 'package:hms_room_kit/src/meeting/meeting_navigation_visibility_controller.dart';
 import 'package:hms_room_kit/src/meeting/meeting_store.dart';
+import 'package:hms_room_kit/src/meeting/waiting_room_screen.dart';
 import 'package:hms_room_kit/src/model/peer_track_node.dart';
 import 'package:hms_room_kit/src/widgets/meeting_modes/custom_one_to_one_grid.dart';
 import 'package:hms_room_kit/src/widgets/meeting_modes/one_to_one_mode.dart';
@@ -36,41 +36,14 @@ class MeetingGridComponent extends StatelessWidget {
         builder: (_, data, __) {
           ///If there are no peerTracks or the view controllers are empty we show an empty tapable container
           if (data.item3 == 0 || data.item6 == 0) {
-            return Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    IconButton(
-                        onPressed: () {
-                          context.read<MeetingStore>().leave();
-                          Navigator.of(context).pop();
-                        },
-                        icon: const Icon(Icons.arrow_back)),
-                  ],
-                ),
-                Spacer(),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: HMSThemeColors.primaryDefault,
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    if (context.read<MeetingStore>().peers.isNotEmpty)
-                      HMSTitleText(
-                          text: "Please wait for host to join",
-                          textColor: HMSThemeColors.onSurfaceHighEmphasis),
-                  ],
-                ),
-                const Spacer()
-              ],
-            );
+            return GestureDetector(
+                onTap: () => visibilityController?.toggleControlsVisibility(),
+                child: Container(
+                  color: Colors.transparent,
+                  height: double.infinity,
+                  width: double.infinity,
+                  child: WaitingRoomScreen(),
+                ));
           }
           return Selector<MeetingStore, Tuple2<MeetingMode, HMSPeer?>>(
               selector: (_, meetingStore) =>
