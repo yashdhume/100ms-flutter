@@ -35,7 +35,7 @@ class MeetingGridComponent extends StatelessWidget {
             meetingStore.viewControllers.length),
         builder: (_, data, __) {
           ///If there are no peerTracks or the view controllers are empty we show an empty tapable container
-          if (data.item3 == 0 || data.item6 == 0) {
+          if (data.item3 < 2) {
             return GestureDetector(
                 onTap: () => visibilityController?.toggleControlsVisibility(),
                 child: Container(
