@@ -6,15 +6,16 @@ import 'dart:io';
 ///Package imports
 import 'package:draggable_widget/draggable_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:hms_room_kit/src/layout_api/hms_room_layout.dart';
+import 'package:hms_room_kit/src/meeting/empty_room_screen.dart';
 
 ///Project imports
 import 'package:hms_room_kit/src/model/peer_track_node.dart';
 import 'package:hms_room_kit/src/widgets/common_widgets/inset_tile.dart';
+import 'package:hms_room_kit/src/widgets/grid_layouts/listenable_peer_widget.dart';
 import 'package:hms_room_kit/src/widgets/meeting_modes/custom_one_to_one_grid.dart';
 import 'package:hms_room_kit/src/widgets/peer_widgets/inset_collapsed_view.dart';
-import 'package:hms_room_kit/src/layout_api/hms_room_layout.dart';
-import 'package:hms_room_kit/src/meeting/empty_room_screen.dart';
+import 'package:provider/provider.dart';
 
 ///[OneToOneMode] is used to render the meeting screen in inset Tile mode
 class OneToOneMode extends StatefulWidget {
@@ -22,6 +23,7 @@ class OneToOneMode extends StatefulWidget {
   final BuildContext context;
   final int screenShareCount;
   final double bottomMargin;
+
   const OneToOneMode(
       {Key? key,
       required this.peerTracks,
@@ -107,32 +109,40 @@ class _OneToOneModeState extends State<OneToOneMode> {
                               oneToOnePeer != null &&
                               HMSRoomLayout.peerType ==
                                   PeerRoleType.conferencing)
-                          ? Center(child: EmptyRoomScreen())
+                          ? (oneToOnePeer != null &&
+                                  widget.peerTracks.length == 1)
+                              ? ListenablePeerWidget(
+                                  peerTracks: [oneToOnePeer!],
+                                  index: 0,
+                                )
+                              : Center(child: EmptyRoomScreen())
                           : CustomOneToOneGrid(
                               peerTracks: widget.peerTracks,
                             ),
-                      DraggableWidget(
-                          dragAnimationScale: 1,
-                          topMargin: 10,
-                          bottomMargin: Platform.isIOS
-                              ? widget.bottomMargin + 20
-                              : widget.bottomMargin,
-                          horizontalSpace: 8,
-                          child: isMinimized
-                              ? InsetCollapsedView(
-                                  callbackFunction: toggleMinimizedView,
-                                )
-                              : ClipRRect(
-                                  borderRadius: BorderRadius.circular(16.0),
-                                  child: ChangeNotifierProvider.value(
-                                    key: ValueKey(
-                                        oneToOnePeer?.uid ?? "" "video_view"),
-                                    value: oneToOnePeer,
-                                    child: InsetTile(
-                                      callbackFunction: toggleMinimizedView,
+
+                      if (widget.peerTracks.length != 1)
+                        DraggableWidget(
+                            dragAnimationScale: 1,
+                            topMargin: 10,
+                            bottomMargin: Platform.isIOS
+                                ? widget.bottomMargin + 20
+                                : widget.bottomMargin,
+                            horizontalSpace: 8,
+                            child: isMinimized
+                                ? InsetCollapsedView(
+                                    callbackFunction: toggleMinimizedView,
+                                  )
+                                : ClipRRect(
+                                    borderRadius: BorderRadius.circular(16.0),
+                                    child: ChangeNotifierProvider.value(
+                                      key: ValueKey(
+                                          oneToOnePeer?.uid ?? "" "video_view"),
+                                      value: oneToOnePeer,
+                                      child: InsetTile(
+                                        callbackFunction: toggleMinimizedView,
+                                      ),
                                     ),
-                                  ),
-                                ))
+                                  ))
                     ],
                   ),
       ),
