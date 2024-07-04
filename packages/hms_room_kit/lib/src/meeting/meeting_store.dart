@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:draggable_widget/draggable_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hms_room_kit/hms_room_kit.dart';
@@ -13,6 +14,7 @@ import 'package:hms_room_kit/src/enums/meeting_mode.dart';
 import 'package:hms_room_kit/src/enums/session_store_keys.dart';
 import 'package:hms_room_kit/src/hmssdk_interactor.dart';
 import 'package:hms_room_kit/src/layout_api/hms_room_layout.dart';
+import 'package:hms_room_kit/src/meeting/meeting_navigation_visibility_controller.dart';
 import 'package:hms_room_kit/src/model/participant_store.dart';
 import 'package:hms_room_kit/src/model/peer_track_node.dart';
 //Project imports
@@ -283,6 +285,11 @@ class MeetingStore extends ChangeNotifier
   bool isTranscriptionDisplayed = false;
 
   List<HMSTranscription> captions = [];
+
+  DragController localPeerDragController = DragController();
+
+  final MeetingNavigationVisibilityController visibilityController =
+      MeetingNavigationVisibilityController();
 
   Future<HMSException?> join(String userName, String? tokenData) async {
     late HMSConfig joinConfig;

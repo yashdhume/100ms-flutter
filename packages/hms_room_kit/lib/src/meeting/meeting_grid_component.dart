@@ -18,9 +18,7 @@ import 'package:tuple/tuple.dart';
 
 ///[MeetingGridComponent] is a component that is used to show the video grid
 class MeetingGridComponent extends StatelessWidget {
-  final MeetingNavigationVisibilityController? visibilityController;
-
-  const MeetingGridComponent({super.key, required this.visibilityController});
+  const MeetingGridComponent({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +35,10 @@ class MeetingGridComponent extends StatelessWidget {
           ///If there are no peerTracks or the view controllers are empty we show an empty tapable container
           if (data.item3 == 0 || data.item6 == 0) {
             return GestureDetector(
-                onTap: () => visibilityController?.toggleControlsVisibility(),
+                onTap: () => context
+                    .read<MeetingStore>()
+                    .visibilityController
+                    .toggleControlsVisibility(context),
                 child: Container(
                   color: Colors.transparent,
                   height: double.infinity,
@@ -65,8 +66,10 @@ class MeetingGridComponent extends StatelessWidget {
                           padding: EdgeInsets.symmetric(
                               vertical: showControls ? 70 : 0),
                           child: GestureDetector(
-                            onTap: () => visibilityController
-                                ?.toggleControlsVisibility(),
+                            onTap: () => context
+                                .read<MeetingStore>()
+                                .visibilityController
+                                .toggleControlsVisibility(context),
                             child: (modeData.item1 ==
                                         MeetingMode.activeSpeakerWithInset &&
                                     (context

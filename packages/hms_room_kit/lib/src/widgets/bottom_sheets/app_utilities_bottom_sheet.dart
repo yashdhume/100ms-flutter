@@ -4,28 +4,29 @@ library;
 import 'package:badges/badges.dart' as badge;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hms_room_kit/hms_room_kit.dart';
+import 'package:hms_room_kit/src/layout_api/hms_room_layout.dart';
+import 'package:hms_room_kit/src/meeting/meeting_store.dart';
 import 'package:hms_room_kit/src/widgets/bottom_sheets/closed_caption_bottom_sheet.dart';
 import 'package:hms_room_kit/src/widgets/bottom_sheets/closed_caption_control_bottom_sheet.dart';
-import 'package:hmssdk_flutter/hmssdk_flutter.dart';
-import 'package:provider/provider.dart';
+import 'package:hms_room_kit/src/widgets/bottom_sheets/end_service_bottom_sheet.dart';
+import 'package:hms_room_kit/src/widgets/bottom_sheets/overlay_participants_bottom_sheet.dart';
+import 'package:hms_room_kit/src/widgets/bottom_sheets/poll_and_quiz_bottom_sheet.dart';
+import 'package:hms_room_kit/src/widgets/common_widgets/hms_cross_button.dart';
+import 'package:hms_room_kit/src/widgets/common_widgets/hms_subheading_text.dart';
 
 ///Project imports
 import 'package:hms_room_kit/src/widgets/common_widgets/more_option_item.dart';
-import 'package:hms_room_kit/src/meeting/meeting_store.dart';
-import 'package:hms_room_kit/hms_room_kit.dart';
-import 'package:hms_room_kit/src/layout_api/hms_room_layout.dart';
-import 'package:hms_room_kit/src/widgets/bottom_sheets/end_service_bottom_sheet.dart';
-import 'package:hms_room_kit/src/widgets/bottom_sheets/overlay_participants_bottom_sheet.dart';
-import 'package:hms_room_kit/src/widgets/common_widgets/hms_cross_button.dart';
-import 'package:hms_room_kit/src/widgets/common_widgets/hms_subheading_text.dart';
 import 'package:hms_room_kit/src/widgets/tab_widgets/chat_participants_tab_bar.dart';
-import 'package:hms_room_kit/src/widgets/bottom_sheets/poll_and_quiz_bottom_sheet.dart';
+import 'package:hmssdk_flutter/hmssdk_flutter.dart';
+import 'package:provider/provider.dart';
 
 ///This renders the app utilities bottom sheet for webRTC or broadcaster
 ///It contains the participants, screen share, brb, raise hand and recording
 ///options
 class AppUtilitiesBottomSheet extends StatefulWidget {
   const AppUtilitiesBottomSheet({Key? key}) : super(key: key);
+
   @override
   State<AppUtilitiesBottomSheet> createState() =>
       _AppUtilitiesBottomSheetState();
@@ -516,6 +517,23 @@ class _AppUtilitiesBottomSheetState extends State<AppUtilitiesBottomSheet> {
                             : meetingStore.isTranscriptionDisplayed
                                 ? "Hide Captions"
                                 : "Show Captions"),
+                  MoreOptionItem(
+                      onTap: () async {
+                        Navigator.pop(context);
+                        meetingStore.visibilityController
+                            .toggleAutoHideControls(context);
+                      },
+                      optionIcon: Icon(
+                        meetingStore.visibilityController.autoHideControls
+                            ? Icons.visibility_outlined
+                            : Icons.visibility_off_outlined,
+                        size: 20,
+                        color: HMSThemeColors.onSurfaceHighEmphasis,
+                      ),
+                      optionText:
+                          meetingStore.visibilityController.autoHideControls
+                              ? "Disable Auto Hide Controls"
+                              : "Auto Hide Controls"),
 
                   ///Virtual background is not supported out of the box in prebuilt as of now
                   // if (AppDebugConfig.isVirtualBackgroundEnabled &&
