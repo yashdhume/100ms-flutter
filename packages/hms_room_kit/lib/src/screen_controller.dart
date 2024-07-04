@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:hms_room_kit/src/layout_api/hms_room_layout.dart';
 import 'package:hms_room_kit/src/preview_meeting_flow.dart';
 import 'package:hmssdk_flutter/hmssdk_flutter.dart';
+import 'package:lottie/lottie.dart';
 
 ///Project imports
 import 'package:hms_room_kit/hms_room_kit.dart';
@@ -32,13 +33,15 @@ class ScreenController extends StatefulWidget {
   ///This function can be passed if you wish to perform some specific actions
   ///in addition to leaving the room when the leave room button is pressed
   final Function? onLeave;
+  final Function? onRoomEnd;
 
   const ScreenController(
       {super.key,
       required this.roomCode,
       this.options,
       this.onLeave,
-      this.authToken});
+      this.authToken,
+      this.onRoomEnd});
   @override
   State<ScreenController> createState() => _ScreenControllerState();
 }
@@ -59,6 +62,7 @@ class _ScreenControllerState extends State<ScreenController> {
     Constant.roomCode = widget.roomCode;
     Constant.authToken = widget.authToken;
     Constant.onLeave = widget.onLeave;
+    Constant.onRoomEnd = widget.onRoomEnd;
 
     ///Here we set the endPoints if it's non-null
     if (widget.options?.endPoints != null) {
@@ -141,8 +145,8 @@ class _ScreenControllerState extends State<ScreenController> {
 
     _hmsSDKInteractor = HMSSDKInteractor(
         iOSScreenshareConfig: widget.options?.iOSScreenshareConfig,
-        joinWithMutedAudio: true,
-        joinWithMutedVideo: true,
+        joinWithMutedAudio: false,
+        joinWithMutedVideo: false,
         isSoftwareDecoderDisabled: AppDebugConfig.isSoftwareDecoderDisabled,
         isAudioMixerDisabled: AppDebugConfig.isAudioMixerDisabled,
         isNoiseCancellationEnabled:

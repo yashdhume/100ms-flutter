@@ -94,7 +94,7 @@ class _MeetingPageState extends State<MeetingPage> {
           builder: (_, failureErrors, __) {
             if (failureErrors.item1) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                Navigator.of(context).pushReplacement(MaterialPageRoute(
+                Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => HMSLeftRoomScreen(
                           isEndRoomCalled: failureErrors.item3,
                           doesRoleHasStreamPermission: failureErrors.item4,
@@ -116,7 +116,7 @@ class _MeetingPageState extends State<MeetingPage> {
                                   primaryColor: HMSThemeColors.primaryDefault,
                                   scaffoldBackgroundColor:
                                       HMSThemeColors.backgroundDim),
-                              child: SingleChildScrollView(
+                              child: SafeArea(
                                 child: SizedBox(
                                   width: MediaQuery.of(context).size.width,
                                   height: MediaQuery.of(context).size.height -
