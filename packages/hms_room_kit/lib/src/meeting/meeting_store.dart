@@ -505,11 +505,23 @@ class MeetingStore extends ChangeNotifier
         hmsActionResultListener: this);
   }
 
+  bool shouldForceChange(String currentRole, String newRole) {
+    Map<String, List<String>> validRoles = {
+      'co-host': ['video', 'voice', 'chat', 'spectator'],
+      'video': ['voice', 'chat', 'spectator'],
+      'voice': ['chat', 'spectator'],
+      'chat': ['spectator']
+    };
+
+    return validRoles[currentRole]?.contains(newRole) ?? false;
+  }
+
   void changeRole(HMSPeer peer, String roleName) {
     try {
       changeRoleOfPeer(
         peer: peer,
         roleName: roles.firstWhere((element) => element.name == roleName),
+        forceChange: shouldForceChange(peer.role.name, roleName),
       );
       return;
     } catch (e) {
