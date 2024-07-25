@@ -58,3 +58,5 @@ sample apps/flutter-meet/android/.idea/
 packages/.DS_Store
 Runner.ipa
 sample apps/flutterflow-prebuilt-quickstart/.dart_tool/
+
+.idea/

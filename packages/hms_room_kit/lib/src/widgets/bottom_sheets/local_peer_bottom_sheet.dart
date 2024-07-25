@@ -1,17 +1,18 @@
 ///Package imports
 library;
 
+import 'package:draggable_widget/draggable_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:hms_room_kit/src/widgets/common_widgets/hms_cross_button.dart';
-import 'package:provider/provider.dart';
 
 ///Project imports
 import 'package:hms_room_kit/hms_room_kit.dart';
 import 'package:hms_room_kit/src/meeting/meeting_store.dart';
 import 'package:hms_room_kit/src/model/peer_track_node.dart';
 import 'package:hms_room_kit/src/widgets/bottom_sheets/change_name_bottom_sheet.dart';
+import 'package:hms_room_kit/src/widgets/common_widgets/hms_cross_button.dart';
 import 'package:hms_room_kit/src/widgets/common_widgets/hms_subheading_text.dart';
+import 'package:provider/provider.dart';
 
 ///[LocalPeerBottomSheet] is a widget that is used to render the bottom sheet when the more option button is clicked on the local peer tile
 ///It has following parameters:
@@ -31,6 +32,7 @@ class LocalPeerBottomSheet extends StatefulWidget {
       this.callbackFunction,
       this.isInsetTile = true})
       : super(key: key);
+
   @override
   State<LocalPeerBottomSheet> createState() => _LocalPeerBottomSheetState();
 }
@@ -224,6 +226,34 @@ class _LocalPeerBottomSheetState extends State<LocalPeerBottomSheet> {
                           ),
                           title: HMSSubheadingText(
                               text: "Minimize Your Tile",
+                              textColor:
+                                  widget.meetingStore.peerTracks.length > 1
+                                      ? HMSThemeColors.onSurfaceHighEmphasis
+                                      : HMSThemeColors.onSurfaceLowEmphasis)),
+                    if (widget.isInsetTile)
+                      ListTile(
+                          horizontalTitleGap: 2,
+                          onTap: () async {
+                            Navigator.pop(context);
+                            context
+                                .read<MeetingStore>()
+                                .localPeerDragController
+                                .jumpTo(AnchoringPosition.center);
+                          },
+                          contentPadding: EdgeInsets.zero,
+                          leading: SvgPicture.asset(
+                            "packages/hms_room_kit/lib/src/assets/icons/arrows-center.svg",
+                            semanticsLabel: "fl_snap_to_center",
+                            height: 20,
+                            width: 20,
+                            colorFilter: ColorFilter.mode(
+                                widget.meetingStore.peerTracks.length > 1
+                                    ? HMSThemeColors.onSurfaceHighEmphasis
+                                    : HMSThemeColors.onSurfaceLowEmphasis,
+                                BlendMode.srcIn),
+                          ),
+                          title: HMSSubheadingText(
+                              text: "Snap To Center",
                               textColor:
                                   widget.meetingStore.peerTracks.length > 1
                                       ? HMSThemeColors.onSurfaceHighEmphasis

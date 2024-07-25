@@ -8,6 +8,7 @@ import 'dart:developer';
 ///Package imports
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hms_room_kit/src/common/extentsions.dart';
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
 import 'package:hmssdk_flutter/hmssdk_flutter.dart';
@@ -99,7 +100,8 @@ class _ParticipantsBottomSheetState extends State<ParticipantsBottomSheet> {
     ///and the local peer has any of the following permissions:
     ///changeRole, removeOthers, mute/unmute others
     return (!peer.isLocal &&
-            (changeRolePermission || removePeerPermission || mutePermission))
+            (changeRolePermission || removePeerPermission || mutePermission) &&
+            peer.role.name != "host")
         ? PopupMenuButton(
             padding: EdgeInsets.zero,
             position: PopupMenuPosition.under,
@@ -109,6 +111,21 @@ class _ParticipantsBottomSheetState extends State<ParticipantsBottomSheet> {
             onSelected: (int value) async {
               ///Here we have defined the functions to be executed on clicking the options
               switch (value) {
+                case 12:
+                  meetingStore.changeRole(peer, "co-host");
+                  break;
+                case 13:
+                  meetingStore.changeRole(peer, "voice");
+                  break;
+                case 14:
+                  meetingStore.changeRole(peer, "video");
+                  break;
+                case 15:
+                  meetingStore.changeRole(peer, "chat");
+                  break;
+                case 16:
+                  meetingStore.changeRole(peer, "spectator");
+                  break;
                 case 1:
 
                   ///If the peer is onStage already we show the option to remove from stage
@@ -190,6 +207,116 @@ class _ParticipantsBottomSheetState extends State<ParticipantsBottomSheet> {
               color: HMSThemeColors.onSurfaceHighEmphasis,
             ),
             itemBuilder: (context) => [
+                  if (changeRolePermission && peer.role.name != "co-host")
+                    PopupMenuItem(
+                      value: 12,
+                      child: Row(children: [
+                        SvgPicture.asset(peer.role.iconPath,
+                            width: 20,
+                            height: 20,
+                            colorFilter: ColorFilter.mode(
+                                HMSThemeColors.onSurfaceHighEmphasis,
+                                BlendMode.srcIn)),
+                        const SizedBox(
+                          width: 8,
+                        ),
+                        HMSTitleText(
+                          text: 'Change to co host',
+                          textColor: HMSThemeColors.onSurfaceHighEmphasis,
+                          fontSize: 14,
+                          lineHeight: 20,
+                          letterSpacing: 0.1,
+                        ),
+                      ]),
+                    ),
+                  if (changeRolePermission && peer.role.name != "voice")
+                    PopupMenuItem(
+                      value: 13,
+                      child: Row(children: [
+                        SvgPicture.asset(peer.role.iconPath,
+                            width: 20,
+                            height: 20,
+                            colorFilter: ColorFilter.mode(
+                                HMSThemeColors.onSurfaceHighEmphasis,
+                                BlendMode.srcIn)),
+                        const SizedBox(
+                          width: 8,
+                        ),
+                        HMSTitleText(
+                          text: 'Change to voice',
+                          textColor: HMSThemeColors.onSurfaceHighEmphasis,
+                          fontSize: 14,
+                          lineHeight: 20,
+                          letterSpacing: 0.1,
+                        ),
+                      ]),
+                    ),
+                  if (changeRolePermission && peer.role.name != "video")
+                    PopupMenuItem(
+                      value: 14,
+                      child: Row(children: [
+                        SvgPicture.asset(peer.role.iconPath,
+                            width: 20,
+                            height: 20,
+                            colorFilter: ColorFilter.mode(
+                                HMSThemeColors.onSurfaceHighEmphasis,
+                                BlendMode.srcIn)),
+                        const SizedBox(
+                          width: 8,
+                        ),
+                        HMSTitleText(
+                          text: 'Change to video',
+                          textColor: HMSThemeColors.onSurfaceHighEmphasis,
+                          fontSize: 14,
+                          lineHeight: 20,
+                          letterSpacing: 0.1,
+                        ),
+                      ]),
+                    ),
+                  if (changeRolePermission && peer.role.name != "chat")
+                    PopupMenuItem(
+                      value: 15,
+                      child: Row(children: [
+                        SvgPicture.asset(peer.role.iconPath,
+                            width: 20,
+                            height: 20,
+                            colorFilter: ColorFilter.mode(
+                                HMSThemeColors.onSurfaceHighEmphasis,
+                                BlendMode.srcIn)),
+                        const SizedBox(
+                          width: 8,
+                        ),
+                        HMSTitleText(
+                          text: 'Change to chat',
+                          textColor: HMSThemeColors.onSurfaceHighEmphasis,
+                          fontSize: 14,
+                          lineHeight: 20,
+                          letterSpacing: 0.1,
+                        ),
+                      ]),
+                    ),
+                  if (changeRolePermission && peer.role.name != "spectator")
+                    PopupMenuItem(
+                      value: 16,
+                      child: Row(children: [
+                        SvgPicture.asset(peer.role.iconPath,
+                            width: 20,
+                            height: 20,
+                            colorFilter: ColorFilter.mode(
+                                HMSThemeColors.onSurfaceHighEmphasis,
+                                BlendMode.srcIn)),
+                        const SizedBox(
+                          width: 8,
+                        ),
+                        HMSTitleText(
+                          text: 'Change to spectator',
+                          textColor: HMSThemeColors.onSurfaceHighEmphasis,
+                          fontSize: 14,
+                          lineHeight: 20,
+                          letterSpacing: 0.1,
+                        ),
+                      ]),
+                    ),
                   if (changeRolePermission &&
                       isOnStageExpPresent &&
                       (isOffStageRole || isOnStageRole))
@@ -397,7 +524,7 @@ class _ParticipantsBottomSheetState extends State<ParticipantsBottomSheet> {
                                             .onSurfaceHighEmphasis,
                                         title: HMSSubheadingText(
                                           text:
-                                              "${context.read<MeetingStore>().participantsInMeetingMap.keys.elementAt(index)} (${((HMSRoomLayout.offStageRoles?.contains(role) ?? false) && isLargeRoom) ? context.read<MeetingStore>().peerListIterators[role]?.totalCount ?? 0 : participantsPerRole.item1}) ",
+                                              "${context.read<MeetingStore>().participantsInMeetingMap.keys.elementAt(index).capitalize.removeDash} (${((HMSRoomLayout.offStageRoles?.contains(role) ?? false) && isLargeRoom) ? context.read<MeetingStore>().peerListIterators[role]?.totalCount ?? 0 : participantsPerRole.item1}) ",
                                           textColor: HMSThemeColors
                                               .onSurfaceMediumEmphasis,
                                           letterSpacing: 0.1,

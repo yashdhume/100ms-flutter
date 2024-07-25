@@ -139,6 +139,7 @@ class _ChangeNameBottomSheetState extends State<ChangeNameBottomSheet> {
                 onSubmitted: (value) {
                   _changeName();
                 },
+                readOnly: true,
                 decoration: InputDecoration(
                     contentPadding: const EdgeInsets.symmetric(
                         vertical: 12, horizontal: 16),

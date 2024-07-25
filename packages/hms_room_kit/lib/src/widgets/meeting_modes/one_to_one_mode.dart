@@ -6,15 +6,16 @@ import 'dart:io';
 ///Package imports
 import 'package:draggable_widget/draggable_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:hms_room_kit/src/layout_api/hms_room_layout.dart';
+import 'package:hms_room_kit/src/meeting/empty_room_screen.dart';
+import 'package:hms_room_kit/src/meeting/meeting_store.dart';
 
 ///Project imports
 import 'package:hms_room_kit/src/model/peer_track_node.dart';
 import 'package:hms_room_kit/src/widgets/common_widgets/inset_tile.dart';
 import 'package:hms_room_kit/src/widgets/meeting_modes/custom_one_to_one_grid.dart';
 import 'package:hms_room_kit/src/widgets/peer_widgets/inset_collapsed_view.dart';
-import 'package:hms_room_kit/src/layout_api/hms_room_layout.dart';
-import 'package:hms_room_kit/src/meeting/empty_room_screen.dart';
+import 'package:provider/provider.dart';
 
 ///[OneToOneMode] is used to render the meeting screen in inset Tile mode
 class OneToOneMode extends StatefulWidget {
@@ -22,6 +23,7 @@ class OneToOneMode extends StatefulWidget {
   final BuildContext context;
   final int screenShareCount;
   final double bottomMargin;
+
   const OneToOneMode(
       {Key? key,
       required this.peerTracks,
@@ -112,6 +114,9 @@ class _OneToOneModeState extends State<OneToOneMode> {
                               peerTracks: widget.peerTracks,
                             ),
                       DraggableWidget(
+                          dragController: context
+                              .read<MeetingStore>()
+                              .localPeerDragController,
                           dragAnimationScale: 1,
                           topMargin: 10,
                           bottomMargin: Platform.isIOS

@@ -3,14 +3,14 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:hmssdk_flutter/hmssdk_flutter.dart';
-import 'package:provider/provider.dart';
 
 ///Project imports
 import 'package:hms_room_kit/hms_room_kit.dart';
+import 'package:hms_room_kit/src/layout_api/hms_room_layout.dart';
 import 'package:hms_room_kit/src/meeting/meeting_store.dart';
 import 'package:hms_room_kit/src/widgets/chat_widgets/recipient_selector_widget.dart';
-import 'package:hms_room_kit/src/layout_api/hms_room_layout.dart';
+import 'package:hmssdk_flutter/hmssdk_flutter.dart';
+import 'package:provider/provider.dart';
 
 ///[ReceipientSelectorChip] is a widget that is used to render the receipient selector chip
 class ReceipientSelectorChip extends StatefulWidget {
@@ -24,6 +24,7 @@ class ReceipientSelectorChip extends StatefulWidget {
       required this.updateSelectedValue,
       this.chipColor})
       : super(key: key);
+
   @override
   State<ReceipientSelectorChip> createState() => _ReceipientSelectorChipState();
 }
@@ -48,15 +49,16 @@ class _ReceipientSelectorChipState extends State<ReceipientSelectorChip> {
     widget.updateSelectedValue(newValue, peerId);
   }
 
+  bool get _privateChatEnabled =>
+      !(!(HMSRoomLayout.chatData?.isPrivateChatEnabled ?? true) &&
+          (HMSRoomLayout.chatData?.isPublicChatEnabled ?? false) &&
+          (HMSRoomLayout.chatData?.rolesWhitelist.isEmpty ?? false));
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => {
-        if (!(HMSRoomLayout.chatData?.isPrivateChatEnabled ?? true) &&
-            (HMSRoomLayout.chatData?.isPublicChatEnabled ?? false) &&
-            (HMSRoomLayout.chatData?.rolesWhitelist.isEmpty ?? false))
-          {() {}}
-        else
+        if (_privateChatEnabled)
           {
             showModalBottomSheet(
                 isScrollControlled: true,
@@ -136,14 +138,15 @@ class _ReceipientSelectorChipState extends State<ReceipientSelectorChip> {
                                       HMSThemeColors.onPrimaryHighEmphasis);
                             }),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 4.0),
-                        child: Icon(
-                          Icons.keyboard_arrow_down,
-                          color: HMSThemeColors.onPrimaryHighEmphasis,
-                          size: 12,
+                      if (_privateChatEnabled)
+                        Padding(
+                          padding: const EdgeInsets.only(left: 4.0),
+                          child: Icon(
+                            Icons.keyboard_arrow_down,
+                            color: HMSThemeColors.onPrimaryHighEmphasis,
+                            size: 12,
+                          ),
                         ),
-                      ),
                     ],
                   ),
                 ))
