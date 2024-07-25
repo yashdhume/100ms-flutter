@@ -6,10 +6,6 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
-//Package imports
-// import 'package:hms_video_plugin/hms_video_plugin.dart';
-import 'package:hms_room_kit/src/model/transcript_store.dart';
-import 'package:hmssdk_flutter/hmssdk_flutter.dart';
 import 'package:draggable_widget/draggable_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24,11 +20,14 @@ import 'package:hms_room_kit/src/model/peer_track_node.dart';
 //Project imports
 import 'package:hms_room_kit/src/model/poll_store.dart';
 import 'package:hms_room_kit/src/model/rtc_stats.dart';
-import 'package:hms_room_kit/src/widgets/toasts/hms_toast_model.dart';
-import 'package:hms_room_kit/src/widgets/toasts/hms_toasts_type.dart';
 //Package imports
 // import 'package:hms_video_plugin/hms_video_plugin.dart';
+import 'package:hms_room_kit/src/model/transcript_store.dart';
+import 'package:hms_room_kit/src/widgets/toasts/hms_toast_model.dart';
+import 'package:hms_room_kit/src/widgets/toasts/hms_toasts_type.dart';
 import 'package:hmssdk_flutter/hmssdk_flutter.dart';
+//Package imports
+// import 'package:hms_video_plugin/hms_video_plugin.dart';
 import 'package:intl/intl.dart';
 
 ///[MeetingStore] is the store that is used to store the data of the meeting
@@ -388,11 +387,15 @@ class MeetingStore extends ChangeNotifier
 
   void endRoom(bool lock, String? reason) {
     isEndRoomCalled = true;
+
     for (var peer in peers) {
       if (peer.isLocal) {
         continue;
       }
       removePeerFromRoom(peer);
+    }
+    if (Constant.onRoomEnd != null) {
+      Constant.onRoomEnd!();
     }
     _hmsSDKInteractor.endRoom(lock, reason ?? "", this);
     _hmsSDKInteractor.destroy();
