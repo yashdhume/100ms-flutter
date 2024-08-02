@@ -9,7 +9,7 @@ import 'package:intl/intl.dart';
 
 class HMSDateExtension {
   ///Returns DateTime object from String
-  DateTime convertDateFromString(String date) {
+  static DateTime convertDateFromString(String date) {
     try {
       DateTime _dateTime = DateTime.parse(date).toLocal();
       return _dateTime;
