@@ -9,13 +9,13 @@ import 'package:intl/intl.dart';
 
 class HMSDateExtension {
   ///Returns DateTime object from String
-  static DateTime convertDateFromString(String date) {
+  DateTime convertDateFromString(String date) {
     try {
       DateTime _dateTime = DateTime.parse(date).toLocal();
       return _dateTime;
     } catch (e) {
       DateFormat format = DateFormat("yyyy-MM-dd h:mm:ss a Z");
-      return format.parse(date);
+      return format.parse(date.replaceAll('\u202F', ' '));
     }
   }
 
