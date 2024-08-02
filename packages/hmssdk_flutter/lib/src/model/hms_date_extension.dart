@@ -5,12 +5,18 @@
 
 ///Dart imports
 import 'dart:developer';
+import 'package:intl/intl.dart';
 
 class HMSDateExtension {
   ///Returns DateTime object from String
   static DateTime convertDateFromString(String date) {
-    DateTime _dateTime = DateTime.parse(date).toLocal();
-    return _dateTime;
+    try {
+      DateTime _dateTime = DateTime.parse(date).toLocal();
+      return _dateTime;
+    } catch (e) {
+      DateFormat format = DateFormat("yyyy-MM-dd h:mm:ss a Z");
+      return format.parse(date);
+    }
   }
 
   ///Returns optional DateTime object from epoch in milliseconds

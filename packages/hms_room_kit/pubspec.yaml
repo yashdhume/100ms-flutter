@@ -5,7 +5,7 @@ homepage: https://www.100ms.live/
 repository: https://github.com/100mslive/100ms-flutter
 issue_tracker: https://github.com/100mslive/100ms-flutter/issues
 documentation: https://www.100ms.live/docs
-
+publish_to: "none"
 environment:
   sdk: ">=3.0.0 <4.0.0"
   flutter: ">=3.10.0"
@@ -13,8 +13,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
-  hmssdk_flutter: 1.10.5
+  hmssdk_flutter:
+    git:
+      url: https://github.com/yashdhume/100ms-flutter.git
+      path: packages/hmssdk_flutter
+      ref: 1.1.5-custom
   intl: ^0.19.0
   permission_handler: ^11.0.0
   provider: ^6.0.5
