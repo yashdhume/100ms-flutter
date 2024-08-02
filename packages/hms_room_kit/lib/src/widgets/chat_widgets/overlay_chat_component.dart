@@ -5,24 +5,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
+///Project imports
+import 'package:hms_room_kit/hms_room_kit.dart';
+import 'package:hms_room_kit/src/enums/session_store_keys.dart';
+import 'package:hms_room_kit/src/layout_api/hms_room_layout.dart';
+import 'package:hms_room_kit/src/meeting/meeting_store.dart';
+import 'package:hms_room_kit/src/widgets/bottom_sheets/chat_utilities_bottom_sheet.dart';
+import 'package:hms_room_kit/src/widgets/chat_widgets/chat_text_field.dart';
+import 'package:hms_room_kit/src/widgets/chat_widgets/pin_chat_widget.dart';
+import 'package:hms_room_kit/src/widgets/chat_widgets/recipient_selector_chip.dart';
 import 'package:hmssdk_flutter/hmssdk_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-///Project imports
-import 'package:hms_room_kit/hms_room_kit.dart';
-import 'package:hms_room_kit/src/meeting/meeting_store.dart';
-import 'package:hms_room_kit/src/enums/session_store_keys.dart';
-import 'package:hms_room_kit/src/layout_api/hms_room_layout.dart';
-import 'package:hms_room_kit/src/widgets/bottom_sheets/chat_utilities_bottom_sheet.dart';
-import 'package:hms_room_kit/src/widgets/chat_widgets/chat_text_field.dart';
-import 'package:hms_room_kit/src/widgets/chat_widgets/pin_chat_widget.dart';
-import 'package:hms_room_kit/src/widgets/chat_widgets/recipient_selector_chip.dart';
-
 ///[OverlayChatComponent] is a component that is used to show the chat
 class OverlayChatComponent extends StatefulWidget {
   final double? height;
+
   const OverlayChatComponent({super.key, this.height});
 
   @override
@@ -44,6 +45,8 @@ class _OverlayChatComponentState extends State<OverlayChatComponent> {
   void initState() {
     super.initState();
     setRecipientChipValue();
+    WidgetsBinding.instance.addPostFrameCallback((_) =>
+        _scrollController.jumpTo(_scrollController.position.maxScrollExtent));
   }
 
   ///This function sets the recipient chip value
