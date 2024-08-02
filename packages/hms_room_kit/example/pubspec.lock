@@ -300,7 +300,7 @@ packages:
     description:
       path: "packages/hmssdk_flutter"
       ref: "1.1.5-custom"
-      resolved-ref: "9b0be8c8c80147661e6456b484fcfe44d2d50289"
+      resolved-ref: "42e69cdfd9c15728604e58ad7bde84e536f7cc83"
       url: "https://github.com/yashdhume/100ms-flutter.git"
     source: git
     version: "1.10.5"
