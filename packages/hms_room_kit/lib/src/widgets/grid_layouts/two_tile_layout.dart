@@ -27,7 +27,7 @@ class TwoTileLayout extends StatelessWidget {
     ///Here we render two rows with one tile in each row
     ///The first row contains the tile with index [startIndex]
     ///The second row contains the tile with index [startIndex+1]
-    return Column(
+    return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         Expanded(
@@ -35,7 +35,7 @@ class TwoTileLayout extends StatelessWidget {
               ListenablePeerWidget(index: startIndex, peerTracks: peerTracks),
         ),
         const SizedBox(
-          height: 2,
+          width: 2,
         ),
         Expanded(
           child: ListenablePeerWidget(
