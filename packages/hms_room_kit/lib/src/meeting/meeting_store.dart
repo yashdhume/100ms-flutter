@@ -387,7 +387,7 @@ class MeetingStore extends ChangeNotifier
 
   void removeEveryoneOffStage() {
     for (var peer in peers) {
-      if ((peer.role.name == "video" || peer.role.name == "audio") &&
+      if ((peer.role.name == "video" || peer.role.name == "voice") &&
           !peer.isLocal) {
         changeRole(peer, "chat");
       }
