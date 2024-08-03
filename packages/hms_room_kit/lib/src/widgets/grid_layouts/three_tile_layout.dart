@@ -33,8 +33,8 @@ class ThreeTileLayout extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Row(
-          children: [
+        Expanded(
+          child: Row(children: [
             Expanded(
               child: ListenablePeerWidget(
                   index: startIndex, peerTracks: peerTracks),
@@ -43,9 +43,10 @@ class ThreeTileLayout extends StatelessWidget {
               width: 2,
             ),
             Expanded(
-                child: ListenablePeerWidget(
-                    index: startIndex + 1, peerTracks: peerTracks)),
-          ],
+              child: ListenablePeerWidget(
+                  index: startIndex + 1, peerTracks: peerTracks),
+            ),
+          ]),
         ),
         Expanded(
           child: ListenablePeerWidget(
