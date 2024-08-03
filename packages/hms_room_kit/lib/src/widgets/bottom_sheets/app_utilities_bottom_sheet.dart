@@ -517,6 +517,19 @@ class _AppUtilitiesBottomSheetState extends State<AppUtilitiesBottomSheet> {
                             : meetingStore.isTranscriptionDisplayed
                                 ? "Hide Captions"
                                 : "Show Captions"),
+                  if (meetingStore.localPeer?.role.permissions.changeRole ??
+                      false)
+                    MoreOptionItem(
+                        onTap: () async {
+                          Navigator.pop(context);
+                          meetingStore.removeEveryoneOffStage();
+                        },
+                        optionIcon: Icon(
+                          Icons.group_remove_outlined,
+                          size: 20,
+                          color: HMSThemeColors.onSurfaceHighEmphasis,
+                        ),
+                        optionText: "Remove everyone off stage"),
                   MoreOptionItem(
                       onTap: () async {
                         Navigator.pop(context);

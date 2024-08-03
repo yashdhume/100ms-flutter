@@ -385,6 +385,15 @@ class MeetingStore extends ChangeNotifier
     _hmsSDKInteractor.sendGroupMessage(message, roles, this);
   }
 
+  void removeEveryoneOffStage() {
+    for (var peer in peers) {
+      if ((peer.role.name == "video" || peer.role.name == "audio") &&
+          !peer.isLocal) {
+        changeRole(peer, "chat");
+      }
+    }
+  }
+
   void endRoom(bool lock, String? reason) {
     isEndRoomCalled = true;
 
