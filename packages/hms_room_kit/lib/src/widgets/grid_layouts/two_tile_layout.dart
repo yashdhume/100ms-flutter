@@ -27,25 +27,31 @@ class TwoTileLayout extends StatelessWidget {
     ///Here we render two rows with one tile in each row
     ///The first row contains the tile with index [startIndex]
     ///The second row contains the tile with index [startIndex+1]
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 250),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(
-            child:
-                ListenablePeerWidget(index: startIndex, peerTracks: peerTracks),
+    return Column(
+      children: [
+        Expanded(flex: 1, child: Container()),
+        Expanded(
+          flex: 4,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: ListenablePeerWidget(
+                    index: startIndex, peerTracks: peerTracks),
+              ),
+              const SizedBox(
+                width: 2,
+              ),
+              Expanded(
+                child: ListenablePeerWidget(
+                    index: startIndex + 1, peerTracks: peerTracks),
+              ),
+            ],
           ),
-          const SizedBox(
-            width: 2,
-          ),
-          Expanded(
-            child: ListenablePeerWidget(
-                index: startIndex + 1, peerTracks: peerTracks),
-          ),
-        ],
-      ),
+        ),
+        Expanded(flex: 1, child: Container()),
+      ],
     );
   }
 }

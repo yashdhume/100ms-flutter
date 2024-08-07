@@ -49,8 +49,18 @@ class ThreeTileLayout extends StatelessWidget {
           ]),
         ),
         Expanded(
-          child: ListenablePeerWidget(
-              index: startIndex + 2, peerTracks: peerTracks),
+          child: Row(children: [
+            Expanded(
+              child: ListenablePeerWidget(
+                  index: startIndex + 2, peerTracks: peerTracks),
+            ),
+            const SizedBox(
+              width: 2,
+            ),
+            Expanded(
+              child: Container(),
+            ),
+          ]),
         ),
       ],
     );
