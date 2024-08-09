@@ -590,6 +590,6 @@ class _AppUtilitiesBottomSheetState extends State<AppUtilitiesBottomSheet> {
           ),
         ),
       ),
-    );
+    ));
   }
 }
