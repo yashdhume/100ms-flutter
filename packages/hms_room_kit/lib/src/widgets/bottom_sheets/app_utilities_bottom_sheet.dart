@@ -14,7 +14,6 @@ import 'package:hms_room_kit/src/widgets/bottom_sheets/overlay_participants_bott
 import 'package:hms_room_kit/src/widgets/bottom_sheets/poll_and_quiz_bottom_sheet.dart';
 import 'package:hms_room_kit/src/widgets/common_widgets/hms_cross_button.dart';
 import 'package:hms_room_kit/src/widgets/common_widgets/hms_subheading_text.dart';
-
 ///Project imports
 import 'package:hms_room_kit/src/widgets/common_widgets/more_option_item.dart';
 import 'package:hms_room_kit/src/widgets/tab_widgets/chat_participants_tab_bar.dart';
@@ -590,6 +589,6 @@ class _AppUtilitiesBottomSheetState extends State<AppUtilitiesBottomSheet> {
           ),
         ),
       ),
-    ));
+    );
   }
 }
