@@ -2,7 +2,6 @@
 library;
 
 import 'package:flutter/material.dart';
-
 ///Project imports
 import 'package:hms_room_kit/src/layout_api/hms_theme_colors.dart';
 import 'package:lottie/lottie.dart';
@@ -15,6 +14,7 @@ class HMSLoader extends StatelessWidget {
   final double? height;
   final double? strokeWidth;
   final Color? loaderColor;
+
   const HMSLoader({super.key, this.height, this.loaderColor, this.strokeWidth});
 
   @override
@@ -23,10 +23,8 @@ class HMSLoader extends StatelessWidget {
       color: HMSThemeColors.backgroundDefault,
       height: height ?? (MediaQuery.of(context).size.height),
       child: Center(
-        child: CircularProgressIndicator(
-          strokeWidth: strokeWidth ?? 2,
-          color: loaderColor ?? HMSThemeColors.primaryDefault,
-        ),
+        child: Lottie.asset(
+            'packages/hms_room_kit/lib/src/assets/icons/textLoader.json'),
       ),
     );
   }

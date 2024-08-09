@@ -2,16 +2,15 @@
 library;
 
 import 'package:flutter/material.dart';
-import 'package:hms_room_kit/src/layout_api/hms_room_layout.dart';
-import 'package:hms_room_kit/src/preview_meeting_flow.dart';
-import 'package:hmssdk_flutter/hmssdk_flutter.dart';
-import 'package:lottie/lottie.dart';
-
 ///Project imports
 import 'package:hms_room_kit/hms_room_kit.dart';
 import 'package:hms_room_kit/src/common/utility_components.dart';
 import 'package:hms_room_kit/src/hmssdk_interactor.dart';
+import 'package:hms_room_kit/src/layout_api/hms_room_layout.dart';
 import 'package:hms_room_kit/src/preview/preview_permissions.dart';
+import 'package:hms_room_kit/src/preview_meeting_flow.dart';
+import 'package:hmssdk_flutter/hmssdk_flutter.dart';
+import 'package:lottie/lottie.dart';
 
 ///[ScreenController] is the controller for the preview screen
 ///It takes following parameters:
@@ -42,6 +41,7 @@ class ScreenController extends StatefulWidget {
       this.onLeave,
       this.authToken,
       this.onRoomEnd});
+
   @override
   State<ScreenController> createState() => _ScreenControllerState();
 }
@@ -192,10 +192,8 @@ class _ScreenControllerState extends State<ScreenController> {
     return Scaffold(
       body: (isLoading)
           ? Center(
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                color: HMSThemeColors.primaryDefault,
-              ),
+              child: Lottie.asset(
+                  'packages/hms_room_kit/lib/src/assets/icons/textLoader.json'),
             )
           : isPermissionGranted
               ? PreviewMeetingFlow(
