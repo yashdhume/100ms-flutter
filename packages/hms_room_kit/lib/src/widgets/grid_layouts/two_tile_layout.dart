@@ -31,7 +31,7 @@ class TwoTileLayout extends StatelessWidget {
       children: [
         Expanded(flex: 1, child: Container()),
         Expanded(
-          flex: 4,
+          flex: 3,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
